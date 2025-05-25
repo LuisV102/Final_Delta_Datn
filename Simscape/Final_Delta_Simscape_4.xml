@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<SimscapeMultibodyImportXML version="2.0" xmlns="urn:mathworks:SimscapeMultibody:import" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<Created by="" on="03/20/25||12:04:44" using="Simscape Multibody Link Version 7.4" from="SolidWorks 30.0.0"/>
+<ModelUnits mass="kilogram" length="millimeter"/>
+<DataUnits mass="kilogram" length="meter"/>
+<RootAssembly name="Final_Delta_Simscape" uid="Final_Delta_Simscape" version="309">
+<AssemblyFile name="Final_Delta_Simscape.SLDASM" type="SolidWorks Assembly"/>
+<InstanceTree>
+<Instance name="SubTayDuoi-2" uid="SubTayDuoi-2" entityUid="SubTayDuoi" rigid="true">
+<Transform>
+<Rotation>0.89178312876282384 -0.33216314201260677 -0.30723036689478062 0.13061254620502274 0.8390966585536388 -0.52806927611626764 0.43320112422272122 0.43079513076685411 0.79167691723312206</Rotation>
+<Translation>0.02017236371980451 -0.016429451890217307 -0.32291243311103479</Translation>
+</Transform>
+<Instance name="TayDuoi-1" uid="TayDuoi-1" grounded="true" entityUid="TayDuoi*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-1" uid="Male Rod End Bearing HS-1" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575185 -0.90164788969392673 0 0.90164788969392684 0.43247090423575163 0 0 0 1</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-2" uid="Male Rod End Bearing HS-2" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>-0.43247090423575185 -0.90164788969392673 0 -0.90164788969392684 0.43247090423575163 0 0 0 -1</Rotation>
+<Translation>0 0 0.33200000000000002</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Washer HS-1" uid="Ball Washer HS-1" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575185 -0.90164788969392673 0 0.90164788969392684 0.43247090423575163 0 0 0 1</Rotation>
+<Translation>0 0 0.33200000000000002</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+<Instance name="Ball Washer HS-2" uid="Ball Washer HS-2" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575185 -0.90164788969392673 0 0.90164788969392684 0.43247090423575163 0 0 0 1</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+</Instance>
+<Instance name="CanhTayTren_Simscape-1" uid="CanhTayTren_Simscape-1" entityUid="CanhTayTren_Simscape" rigid="true">
+<Transform>
+<Rotation>0.99402046051415049 0.10592776678642526 -0.026507212280373706 0.026657190238976933 -3.7004181950895806e-16 0.99964463396177095 0.10589012365560391 -0.99437382720164191 -0.0028237366308160885</Rotation>
+<Translation>0.05899999999970184 -4.9513258299740817e-08 -0.03549999999999999</Translation>
+</Transform>
+<Instance name="Long Tru Nhua-2" uid="Long Tru Nhua-2" entityUid="Long Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.99964463396177072 -0.026657190238980166 0 0 0 1 -0.026657190238980173 -0.99964463396177083 0</Rotation>
+<Translation>0.14984006633330957 0 -0.0079971570716941814</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-1" uid="Ball Joint M5-1" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.99964463396177083 0.026657190238980052 0 0 0 -1 -0.026657190238980059 0.99964463396177083 0</Rotation>
+<Translation>0.15061307389069981 0 0.020990626330440205</Translation>
+</Transform>
+</Instance>
+<Instance name="CanhTayTren_Simscape_2-1" uid="CanhTayTren_Simscape_2-1" grounded="true" entityUid="CanhTayTren_Simscape_2*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Long Tru Nhua-1" uid="Long Tru Nhua-1" entityUid="Long Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.99964463396177083 0.026657190238980052 0 0 0 -1 -0.026657190238980059 0.99964463396177083 0</Rotation>
+<Translation>0.15005332385522138 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-2" uid="Ball Joint M5-2" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.99624970155306736 0.026657190238980503 -0.082316015233894035 -0.082345277949085735 -1.4502749122938896e-16 -0.99660386071873497 -0.026566658708081767 0.99964463396177083 0.0021950937395703585</Rotation>
+<Translation>0.14928031629783123 0 -0.028987783402134374</Translation>
+</Transform>
+</Instance>
+</Instance>
+<Instance name="Top_Delta_Simscape-1" uid="Top_Delta_Simscape-1" grounded="true" entityUid="Top_Delta_Simscape" rigid="true">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+<Instance name="Fake Motor-3" uid="Fake Motor-3" entityUid="Fake Motor*:*Default">
+<Transform>
+<Rotation>-0.83716910433121861 0.54694413860399416 -3.4972025275692435e-15 2.9277499076700105e-15 -1.9127744239650824e-15 -1 -0.54694413860399416 -0.83716910433121872 0</Rotation>
+<Translation>0.058999999999701791 0.014989950486741703 -0.035500000000000059</Translation>
+</Transform>
+</Instance>
+<Instance name="PartARM-6" uid="PartARM-6" entityUid="PartARM*:*Default">
+<Transform>
+<Rotation>0 0.5 -0.86602540378443882 0 -0.86602540378443882 -0.5 -1 0 0</Rotation>
+<Translation>-0.035570094233925667 0.04759092828331845 -0.027500000000000007</Translation>
+</Transform>
+</Instance>
+<Instance name="BaseA_Simscape-1" uid="BaseA_Simscape-1" entityUid="BaseA_Simscape*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="PartARM-4" uid="PartARM-4" entityUid="PartARM*:*Default">
+<Transform>
+<Rotation>-3.4914813388431334e-15 1 -3.4914813388431334e-15 0 -3.4914813388431334e-15 -1 -1 -3.4914813388431334e-15 0</Rotation>
+<Translation>0.058999999999706017 0.014989950486741703 -0.027500000000000212</Translation>
+</Transform>
+</Instance>
+<Instance name="Fake Motor-1" uid="Fake Motor-1" entityUid="Fake Motor*:*Default">
+<Transform>
+<Rotation>0.50000000000000033 -3.1384580676813071e-15 -0.86602540378443849 0.86602540378443849 -5.4359688306484579e-15 0.50000000000000033 -6.276916135362608e-15 -1 0</Rotation>
+<Translation>-0.016508832216745605 -0.058595953039695677 -0.035499999999999851</Translation>
+</Transform>
+</Instance>
+<Instance name="Fake Motor-2" uid="Fake Motor-2" entityUid="Fake Motor*:*Default">
+<Transform>
+<Rotation>0.047628373433441382 0.497726368644544 0.86602540378443871 -0.082494762668584409 -0.86208735875910736 0.49999999999999994 0.99545273728908834 -0.095256746866882902 1.6124564201264886e-16</Rotation>
+<Translation>-0.042498297464203277 0.043590928283322103 -0.035499999999999844</Translation>
+</Transform>
+</Instance>
+<Instance name="PartARM-5" uid="PartARM-5" entityUid="PartARM*:*Default">
+<Transform>
+<Rotation>0 0.50000000000000033 0.86602540378443849 0 0.86602540378443849 -0.50000000000000033 -1 0 0</Rotation>
+<Translation>-0.023437035447019014 -0.054595953039692051 -0.027500000000000007</Translation>
+</Transform>
+</Instance>
+</Instance>
+<Instance name="SubTayDuoi-6" uid="SubTayDuoi-6" entityUid="SubTayDuoi" rigid="true">
+<Transform>
+<Rotation>0.46601448531083062 -0.82903464900839441 -0.30908259450187398 0.8763291527880166 0.38432684847255932 0.29041365242871653 -0.12197424094585965 -0.40619505694515612 0.90560911007951028</Rotation>
+<Translation>-0.023158935470467629 0.071395784902997805 -0.3208616536397989</Translation>
+</Transform>
+<Instance name="TayDuoi-1" uid="TayDuoi-1" grounded="true" entityUid="TayDuoi*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-1" uid="Male Rod End Bearing HS-1" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392673 0 0.90164788969392662 0.43247090423575174 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 -0.01799999999999996</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-2" uid="Male Rod End Bearing HS-2" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>-0.43247090423575169 -0.90164788969392673 0 -0.90164788969392662 0.43247090423575174 0 0 0 -0.99999999999999978</Rotation>
+<Translation>0 0 0.33199999999999996</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Washer HS-1" uid="Ball Washer HS-1" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392673 0 0.90164788969392662 0.43247090423575174 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 0.33199999999999996</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+<Instance name="Ball Washer HS-2" uid="Ball Washer HS-2" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392673 0 0.90164788969392662 0.43247090423575174 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 -0.01799999999999996</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+</Instance>
+<Instance name="CanhTayTren_Simscape-2" uid="CanhTayTren_Simscape-2" entityUid="CanhTayTren_Simscape" rigid="true">
+<Transform>
+<Rotation>-0.52030105196075904 -0.051001903022003081 -0.85245857448714879 0.84787347674960711 0.088337887316810138 -0.52278770556406173 0.10196755735556817 -0.99478400849256565 -0.0027191348628152934</Rotation>
+<Translation>-0.0295165766614751 0.051085928283322993 -0.035499999999998109</Translation>
+</Transform>
+<Instance name="Long Tru Nhua-2" uid="Long Tru Nhua-2" entityUid="Long Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.99964463396177083 -0.026657190238980211 0 0 0 1 -0.026657190238980211 -0.99964463396177083 0</Rotation>
+<Translation>0.1498400663333096 0 -0.0079971570716941762</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-1" uid="Ball Joint M5-1" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.99964463396177083 0.026657190238979989 0 0 0 -1 -0.026657190238979989 0.99964463396177083 0</Rotation>
+<Translation>0.15061307389069983 0 0.020990626330440194</Translation>
+</Transform>
+</Instance>
+<Instance name="CanhTayTren_Simscape_2-1" uid="CanhTayTren_Simscape_2-1" grounded="true" entityUid="CanhTayTren_Simscape_2*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Long Tru Nhua-1" uid="Long Tru Nhua-1" entityUid="Long Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.99964463396177083 0.026657190238979989 0 0 0 -1 -0.026657190238979989 0.99964463396177083 0</Rotation>
+<Translation>0.15005332385522147 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-2" uid="Ball Joint M5-2" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.99624970155306758 0.026657190238980444 -0.082316015233893994 -0.082345277949085777 -1.2188015871747797e-16 -0.99660386071873508 -0.026566658708081822 0.99964463396177083 0.0021950937395703229</Rotation>
+<Translation>0.14928031629783128 0 -0.028987783402134391</Translation>
+</Transform>
+</Instance>
+</Instance>
+<Instance name="SubTayDuoi-1" uid="SubTayDuoi-1" entityUid="SubTayDuoi" rigid="true">
+<Transform>
+<Rotation>0.93324655255733191 -0.18617296741888995 -0.30723036689477823 -0.004439076083471427 0.84918969272216649 -0.52806927611626675 0.35920908499560572 0.49418265042075044 0.79167691723312383</Rotation>
+<Translation>-0.023125595373539802 0.0085686364476851989 -0.32291243311103468</Translation>
+</Transform>
+<Instance name="TayDuoi-1" uid="TayDuoi-1" grounded="true" entityUid="TayDuoi*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-1" uid="Male Rod End Bearing HS-1" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575163 -0.90164788969392662 0 0.90164788969392662 0.43247090423575163 1.1102230246251565e-16 0 0 1</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-2" uid="Male Rod End Bearing HS-2" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>-0.43247090423575163 -0.90164788969392662 0 -0.90164788969392662 0.43247090423575163 -1.1102230246251565e-16 0 0 -1</Rotation>
+<Translation>0 0 0.33200000000000007</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Washer HS-1" uid="Ball Washer HS-1" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575163 -0.90164788969392662 0 0.90164788969392662 0.43247090423575163 1.1102230246251565e-16 0 0 1</Rotation>
+<Translation>0 0 0.33200000000000007</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+<Instance name="Ball Washer HS-2" uid="Ball Washer HS-2" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575163 -0.90164788969392662 0 0.90164788969392662 0.43247090423575163 1.1102230246251565e-16 0 0 1</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+</Instance>
+<Instance name="SubTayDuoi-4" uid="SubTayDuoi-4" entityUid="SubTayDuoi" rigid="true">
+<Transform>
+<Rotation>0.70090690404425204 0.5885484880955808 0.40291461753516411 -0.59689887066189407 0.79323926823730528 -0.12034617371939919 -0.39043725496634779 -0.15614781614467266 0.90729080754055502</Rotation>
+<Translation>0.07438842105827316 0.014956791823677125 -0.32083138308550047</Translation>
+</Transform>
+<Instance name="TayDuoi-1" uid="TayDuoi-1" grounded="true" entityUid="TayDuoi*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-1" uid="Male Rod End Bearing HS-1" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392662 0 0.90164788969392673 0.43247090423575163 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-2" uid="Male Rod End Bearing HS-2" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>-0.43247090423575169 -0.90164788969392662 0 -0.90164788969392673 0.43247090423575163 0 0 0 -0.99999999999999978</Rotation>
+<Translation>0 0 0.33199999999999996</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Washer HS-1" uid="Ball Washer HS-1" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392662 0 0.90164788969392673 0.43247090423575163 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 0.33199999999999996</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+<Instance name="Ball Washer HS-2" uid="Ball Washer HS-2" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392662 0 0.90164788969392673 0.43247090423575163 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+</Instance>
+<Instance name="End_Effector_Simscape-2" uid="End_Effector_Simscape-2" entityUid="End_Effector_Simscape" rigid="true">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0.025153530777235561 0.042121111288523055 -0.34316261762123113</Translation>
+</Transform>
+<Instance name="PartKhoaTruc-1" uid="PartKhoaTruc-1" entityUid="PartKhoaTruc*:*Default">
+<Transform>
+<Rotation>6.3907212854985558e-15 -1 0 1 6.3907212854985558e-15 0 0 0 1</Rotation>
+<Translation>0.038000000000000034 -6.9388939039072284e-16 0.0070000000000000062</Translation>
+</Transform>
+</Instance>
+<Instance name="PartKhoaTruc-3" uid="PartKhoaTruc-3" entityUid="PartKhoaTruc*:*Default">
+<Transform>
+<Rotation>0.86602540378443549 0.50000000000000544 -1.8076750315151394e-16 -0.50000000000000544 0.8660254037844356 0 1.1102230246251565e-16 1.6923873766467035e-16 1</Rotation>
+<Translation>-0.019000000000000065 -0.03290896534380832 0.0070000000000000062</Translation>
+</Transform>
+</Instance>
+<Instance name="Short Tru Nhua-2" uid="Short Tru Nhua-2" entityUid="Short Tru Nhua*:*Default">
+<Transform>
+<Rotation>1 0 0 0 -1.0000000000000002 0 0 0 -1.0000000000000002</Rotation>
+<Translation>0.041982427165403041 -0.010000000000000717 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="EndEffector_Simscape-1" uid="EndEffector_Simscape-1" grounded="true" entityUid="EndEffector_Simscape*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Short Tru Nhua-6" uid="Short Tru Nhua-6" entityUid="Short Tru Nhua*:*Default">
+<Transform>
+<Rotation>-0.33510408201657893 0.86602540378443515 -0.37108658587428334 -0.58041729587643331 -0.50000000000000588 -0.64274082074152006 -0.74217317174855812 -1.8509151657295245e-16 0.67020816403314964</Rotation>
+<Translation>-0.012439745962155704 -0.041546272039702965 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="PartKhoaTruc-2" uid="PartKhoaTruc-2" entityUid="PartKhoaTruc*:*Default">
+<Transform>
+<Rotation>-0.86602540378444526 0.49999999999998895 -1.1102230246251565e-16 -0.49999999999998901 -0.86602540378444515 -1.1102230246251565e-16 0 0 1</Rotation>
+<Translation>-0.018999999999970933 0.032908965343818208 0.0070000000000001172</Translation>
+</Transform>
+</Instance>
+<Instance name="Short Tru Nhua-1" uid="Short Tru Nhua-1" entityUid="Short Tru Nhua*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0.041982427165403041 0.0099999999999992803 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Short Tru Nhua-3" uid="Short Tru Nhua-3" entityUid="Short Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.041942248393034356 -0.86602540378444515 0.4982377422473388 -0.072646105200409289 -0.49999999999998873 -0.86297308382082372 0.99647548449470047 1.2741602288457359e-15 -0.083884496786068435</Rotation>
+<Translation>-0.029760254037843863 0.031546272039703588 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Short Tru Nhua-4" uid="Short Tru Nhua-4" entityUid="Short Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.4997721456594173 0.86602540378444492 -0.015093125023381834 -0.86563074848984922 0.49999999999998929 0.026142059385489712 0.030186250046766398 -1.2110993588086538e-15 0.99954429131885603</Rotation>
+<Translation>-0.01243974596215499 0.041546272039703347 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Short Tru Nhua-5" uid="Short Tru Nhua-5" entityUid="Short Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.50000000000000588 -0.86602540378443527 -1.0558830452249497e-16 0.86602540378443527 0.50000000000000588 1.6406038707734433e-16 0 -1.7347234759768076e-16 1</Rotation>
+<Translation>-0.029760254037844415 -0.031546272039702845 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-8" uid="Ball Joint M5-8" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>-0.49705732389765639 -0.86602540378444526 -0.05416656496113427 0.86092853926498714 -0.49999999999998862 0.09381924258416996 -0.1083331299222733 1.2667936092814185e-15 0.99411464779533543</Rotation>
+<Translation>-0.04274897954667134 0.024047227870752155 0.0060000000000000608</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-7" uid="Ball Joint M5-7" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.77974312949670055 2.5062075542803058e-16 0.62609955438627485 -2.2085050631469903e-16 0.99999999999999989 -1.2524220778297891e-16 -0.62609955438627496 0 0.77974312949670044</Rotation>
+<Translation>0.041982427165403041 0.024998088337902513 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-6" uid="Ball Joint M5-6" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>-0.55671726590169757 -3.7159780546448265e-16 -0.8307020439645848 -4.1797094735654012e-16 1 -1.6721538539001032e-16 0.8307020439645848 2.5411762811586663e-16 -0.55671726590169757</Rotation>
+<Translation>0.041982427165403041 -0.024998088337903943 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-11" uid="Ball Joint M5-11" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.49705732389767404 -0.86602540378443493 0.054166564961137337 0.8609285392649767 0.50000000000000633 0.093819242584168891 -0.10833312992227374 -2.5669253488832744e-16 0.99411464779533532</Rotation>
+<Translation>-0.042748979546671673 -0.024047227870751128 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-10" uid="Ball Joint M5-10" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.41876081485408057 -0.86602540378443471 -0.27320208627086506 0.72531500754619771 0.50000000000000666 -0.47319989415494629 0.54640417254172347 5.1173365053601833e-16 0.83752162970814936</Rotation>
+<Translation>0.00054897954667155677 -0.049045316208654662 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-9" uid="Ball Joint M5-9" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>-0.49866461375091459 -0.86602540378444481 0.036518529442467772 0.86371244695331895 -0.49999999999998929 -0.063251948412053352 0.073037058884934961 1.2474238209460966e-15 0.99732922750185093</Rotation>
+<Translation>0.00054897954667240678 0.049045316208654807 0.0060000000000000053</Translation>
+</Transform>
+</Instance>
+</Instance>
+<Instance name="CanhTayTren_Simscape-3" uid="CanhTayTren_Simscape-3" entityUid="CanhTayTren_Simscape" rigid="true">
+<Transform>
+<Rotation>-0.46998254480098417 0.081918988632123615 0.87886613706746086 -0.86734802674377687 0.14188785041549476 -0.47704846547090657 -0.16377975481135484 -0.98648726155280897 0.0043674601283026915</Rotation>
+<Translation>-0.029490553019474185 -0.051100953039695134 -0.035500000000000781</Translation>
+</Transform>
+<Instance name="Long Tru Nhua-2" uid="Long Tru Nhua-2" entityUid="Long Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.99964463396177095 -0.026657190238980173 0 0 0 0.99999999999999989 -0.026657190238980208 -0.99964463396177061 0</Rotation>
+<Translation>0.1498400663333096 0 -0.0079971570716942057</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-1" uid="Ball Joint M5-1" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.99964463396177106 0.026657190238980114 0 0 0 -0.99999999999999989 -0.026657190238980097 0.99964463396177083 0</Rotation>
+<Translation>0.15061307389069983 0 0.020990626330440191</Translation>
+</Transform>
+</Instance>
+<Instance name="CanhTayTren_Simscape_2-1" uid="CanhTayTren_Simscape_2-1" grounded="true" entityUid="CanhTayTren_Simscape_2*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Long Tru Nhua-1" uid="Long Tru Nhua-1" entityUid="Long Tru Nhua*:*Default">
+<Transform>
+<Rotation>0.99964463396177106 0.026657190238980114 0 0 0 -0.99999999999999989 -0.026657190238980097 0.99964463396177083 0</Rotation>
+<Translation>0.15005332385522141 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Joint M5-2" uid="Ball Joint M5-2" entityUid="Ball Joint M5*:*Default">
+<Transform>
+<Rotation>0.99624970155306736 0.026657190238980492 -0.082316015233894091 -0.082345277949085693 -1.4334914516162992e-16 -0.99660386071873486 -0.026566658708081742 0.99964463396177083 0.0021950937395703455</Rotation>
+<Translation>0.14928031629783128 0 -0.028987783402134367</Translation>
+</Transform>
+</Instance>
+</Instance>
+<Instance name="SubTayDuoi-3" uid="SubTayDuoi-3" entityUid="SubTayDuoi" rigid="true">
+<Transform>
+<Rotation>0.64769748035909824 0.64664347589144244 0.402914617535166 -0.66290315042571957 0.73896969601381934 -0.12034617371939749 -0.37556276052363252 -0.18914545582772338 0.90729080754055469</Rotation>
+<Translation>0.074388421058273063 0.064952968499483163 -0.32083138308549952</Translation>
+</Transform>
+<Instance name="TayDuoi-1" uid="TayDuoi-1" grounded="true" entityUid="TayDuoi*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-1" uid="Male Rod End Bearing HS-1" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575174 -0.90164788969392662 0 0.90164788969392673 0.43247090423575185 0 -2.2204460492503131e-16 1.3877787807814457e-16 1</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-2" uid="Male Rod End Bearing HS-2" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>-0.43247090423575174 -0.90164788969392662 0 -0.90164788969392673 0.43247090423575185 0 2.2204460492503131e-16 1.3877787807814457e-16 -1</Rotation>
+<Translation>0 0 0.33200000000000007</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Washer HS-1" uid="Ball Washer HS-1" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575174 -0.90164788969392662 0 0.90164788969392673 0.43247090423575185 0 -2.2204460492503131e-16 1.3877787807814457e-16 1</Rotation>
+<Translation>0 0 0.33200000000000007</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+<Instance name="Ball Washer HS-2" uid="Ball Washer HS-2" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575174 -0.90164788969392662 0 0.90164788969392673 0.43247090423575185 0 -2.2204460492503131e-16 1.3877787807814457e-16 1</Rotation>
+<Translation>0 0 -0.018000000000000016</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+</Instance>
+<Instance name="SubTayDuoi-5" uid="SubTayDuoi-5" entityUid="SubTayDuoi" rigid="true">
+<Transform>
+<Rotation>0.3457091091556983 -0.8859758245137197 -0.30908259450187092 0.92140274500412711 0.25821869022569094 0.29041365242871769 -0.17748857243674251 -0.38518819607480603 0.90560911007951095</Rotation>
+<Translation>0.020139023622874713 0.096393873240901151 -0.32086165363979818</Translation>
+</Transform>
+<Instance name="TayDuoi-1" uid="TayDuoi-1" grounded="true" entityUid="TayDuoi*:*Default">
+<Transform>
+<Rotation>1 0 0 0 1 0 0 0 1</Rotation>
+<Translation>0 0 0</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-1" uid="Male Rod End Bearing HS-1" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392651 0 0.90164788969392662 0.43247090423575174 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 -0.01799999999999996</Translation>
+</Transform>
+</Instance>
+<Instance name="Male Rod End Bearing HS-2" uid="Male Rod End Bearing HS-2" entityUid="Male Rod End Bearing HS*:*Default">
+<Transform>
+<Rotation>-0.43247090423575169 -0.90164788969392651 0 -0.90164788969392662 0.43247090423575174 0 0 0 -0.99999999999999978</Rotation>
+<Translation>0 0 0.33199999999999996</Translation>
+</Transform>
+</Instance>
+<Instance name="Ball Washer HS-1" uid="Ball Washer HS-1" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392651 0 0.90164788969392662 0.43247090423575174 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 0.33199999999999996</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+<Instance name="Ball Washer HS-2" uid="Ball Washer HS-2" entityUid="Ball Washer HS*:*Default">
+<Transform>
+<Rotation>0.43247090423575169 -0.90164788969392651 0 0.90164788969392662 0.43247090423575174 0 0 0 0.99999999999999978</Rotation>
+<Translation>0 0 -0.01799999999999996</Translation>
+</Transform>
+<VisualProperties>
+<Ambient r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Diffuse r="0.9882352941176471" g="0.73725490196078436" b="0.51764705882352935" a="1"/>
+<Specular r="0.49411764705882355" g="0.36862745098039218" b="0.25882352941176467" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Instance>
+</Instance>
+</InstanceTree>
+<Constraints>
+<Concentric name="Concentric21">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-3</Uid>
+<Uid>Ball Joint M5-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-1</Uid>
+<Uid>Ball Washer HS-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric22">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-1</Uid>
+<Uid>Ball Washer HS-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>End_Effector_Simscape-2</Uid>
+<Uid>Ball Joint M5-11</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric23">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-3</Uid>
+<Uid>Ball Joint M5-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-2</Uid>
+<Uid>Ball Washer HS-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric24">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-2</Uid>
+<Uid>Ball Washer HS-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>End_Effector_Simscape-2</Uid>
+<Uid>Ball Joint M5-10</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric25">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-4</Uid>
+<Uid>Ball Washer HS-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>End_Effector_Simscape-2</Uid>
+<Uid>Ball Joint M5-6</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric26">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-3</Uid>
+<Uid>Ball Washer HS-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>End_Effector_Simscape-2</Uid>
+<Uid>Ball Joint M5-7</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric27">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-5</Uid>
+<Uid>Ball Washer HS-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>End_Effector_Simscape-2</Uid>
+<Uid>Ball Joint M5-9</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric28">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-6</Uid>
+<Uid>Ball Washer HS-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>End_Effector_Simscape-2</Uid>
+<Uid>Ball Joint M5-8</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric29">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-1</Uid>
+<Uid>Ball Joint M5-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-4</Uid>
+<Uid>Ball Washer HS-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric30">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-1</Uid>
+<Uid>Ball Joint M5-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-3</Uid>
+<Uid>Ball Washer HS-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric31">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-2</Uid>
+<Uid>Ball Joint M5-2</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-5</Uid>
+<Uid>Ball Washer HS-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Concentric name="Concentric32">
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-2</Uid>
+<Uid>Ball Joint M5-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="sphere">
+<InstancePath>
+<Uid>SubTayDuoi-6</Uid>
+<Uid>Ball Washer HS-1</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+</ConstraintGeometry>
+</Concentric>
+<Coincident name="Coincident1">
+<ConstraintGeometry geomType="line">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>Fake Motor-3</Uid>
+</InstancePath>
+<Position>0 0 0.0189</Position>
+<Axis>0 0 -1</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="line">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-1</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>-0.00010662876095593465 0 -0.0039985785358470837</Position>
+<Axis>0.026657190238980544 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+</Coincident>
+<Coincident name="Coincident2">
+<ConstraintGeometry geomType="line">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>Fake Motor-2</Uid>
+</InstancePath>
+<Position>0 0 0.0189</Position>
+<Axis>0 0 -1</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="line">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-2</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>-0.00010662876095593465 0 -0.0039985785358470811</Position>
+<Axis>0.026657190238980541 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+</Coincident>
+<Coincident name="Coincident3">
+<ConstraintGeometry geomType="line">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>Fake Motor-1</Uid>
+</InstancePath>
+<Position>0 0 0.018900000000000007</Position>
+<Axis>0 0 -1</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="line">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-3</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>-0.00010662876095592078 0 -0.0039985785358470881</Position>
+<Axis>0.026657190238980572 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+</Coincident>
+<Distance name="Distance1">
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-1</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>0.073580509357146079 0 0.0020392750532820148</Position>
+<Axis>0.026657190238980544 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>Fake Motor-3</Uid>
+</InstancePath>
+<Position>0 0 0.0080000000000000002</Position>
+<Axis>0 0 1</Axis>
+</ConstraintGeometry>
+</Distance>
+<Distance name="Distance2">
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-2</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>0.073580509357146107 0 0.0020392750532820256</Position>
+<Axis>0.026657190238980541 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>Fake Motor-2</Uid>
+</InstancePath>
+<Position>0 0 0.0079999999999999967</Position>
+<Axis>0 0 1</Axis>
+</ConstraintGeometry>
+</Distance>
+<Distance name="Distance3">
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-3</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>0.073580509357146134 0 0.0020392750532820174</Position>
+<Axis>0.026657190238980572 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>Fake Motor-1</Uid>
+</InstancePath>
+<Position>0 0 0.0080000000000000019</Position>
+<Axis>0 0 1</Axis>
+</ConstraintGeometry>
+</Distance>
+<Parallel name="Parallel1">
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>PartARM-4</Uid>
+</InstancePath>
+<Position>0 0 0.0080000000000000002</Position>
+<Axis>0 0 1</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-1</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>0.073580509357146079 0 0.0020392750532820148</Position>
+<Axis>0.026657190238980544 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+</Parallel>
+<Parallel name="Parallel2">
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>PartARM-5</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+<Axis>0 0 -1</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-3</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>0.073580509357146134 0 0.0020392750532820174</Position>
+<Axis>0.026657190238980572 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+</Parallel>
+<Parallel name="Parallel3">
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>Top_Delta_Simscape-1</Uid>
+<Uid>PartARM-6</Uid>
+</InstancePath>
+<Position>0 0 0</Position>
+<Axis>0 0 -1</Axis>
+</ConstraintGeometry>
+<ConstraintGeometry geomType="plane">
+<InstancePath>
+<Uid>CanhTayTren_Simscape-2</Uid>
+<Uid>CanhTayTren_Simscape_2-1</Uid>
+</InstancePath>
+<Position>0.073580509357146107 0 0.0020392750532820256</Position>
+<Axis>0.026657190238980541 0 0.99964463396177083</Axis>
+</ConstraintGeometry>
+</Parallel>
+</Constraints>
+</RootAssembly>
+<Assemblies>
+<Assembly name="SubTayDuoi" uid="SubTayDuoi" version="174">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<AssemblyFile name="SubTayDuoi.SLDASM" type="SolidWorks Assembly"/>
+</Assembly>
+<Assembly name="CanhTayTren_Simscape" uid="CanhTayTren_Simscape" version="141">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<AssemblyFile name="CanhTayTren_Simscape.SLDASM" type="SolidWorks Assembly"/>
+</Assembly>
+<Assembly name="Top_Delta_Simscape" uid="Top_Delta_Simscape" version="142">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<AssemblyFile name="Top_Delta_Simscape.SLDASM" type="SolidWorks Assembly"/>
+</Assembly>
+<Assembly name="End_Effector_Simscape" uid="End_Effector_Simscape" version="285">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<AssemblyFile name="End_Effector_Simscape.SLDASM" type="SolidWorks Assembly"/>
+</Assembly>
+</Assemblies>
+<Parts>
+<Part name="Ball Joint M5" uid="Ball Joint M5*:*Default" version="122">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="Ball Joint M5.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.0004823307070676322</Mass>
+<CenterOfMass>0 0 0</CenterOfMass>
+<Inertia>5.9636830891715858e-09 7.9430741186643685e-09 5.9636830891715858e-09 0 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="Ball Joint M5_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="1" g="1" b="1" a="1"/>
+<Diffuse r="1" g="1" b="1" a="1"/>
+<Specular r="0.5" g="0.5" b="0.5" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="Ball Washer HS" uid="Ball Washer HS*:*Default" version="132">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="Ball Washer HS.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.00044935765190697274</Mass>
+<CenterOfMass>0 1.7409493548374789e-05 0</CenterOfMass>
+<Inertia>1.0398222897198903e-08 1.7858491203454569e-08 1.0398222897198903e-08 0 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="Ball Washer HS_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="BaseA_Simscape" uid="BaseA_Simscape*:*Default" version="114">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="BaseA_Simscape.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.10667555841369571</Mass>
+<CenterOfMass>-7.4428627224919673e-06 1.4343059332528878e-05 0.0040299262492678543</CenterOfMass>
+<Inertia>0.00014292254970748385 0.0001427649148830923 0.00028456255263798185 5.8815482584439136e-11 -1.7599343999227005e-11 1.2608911486636195e-07</Inertia>
+</MassProperties>
+<GeometryFile name="BaseA_Simscape_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="CanhTayTren_Simscape_2" uid="CanhTayTren_Simscape_2*:*Default" version="114">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="CanhTayTren_Simscape_2.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.032639280670647738</Mass>
+<CenterOfMass>0.069840491756174017 0.00025278586966493609 -0.0018624114382091938</CenterOfMass>
+<Inertia>2.0491268109856355e-06 7.0650389571228313e-05 7.2249352915546198e-05 -1.5915862591227956e-08 1.8733418476879849e-06 5.9683162170173989e-07</Inertia>
+</MassProperties>
+<GeometryFile name="CanhTayTren_Simscape_2_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="EndEffector_Simscape" uid="EndEffector_Simscape*:*Default" version="114">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="EndEffector_Simscape.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.020936023426990961</Mass>
+<CenterOfMass>0.00022924876167860778 -0.00065966990057633366 0.0037270818367000297</CenterOfMass>
+<Inertia>9.1197535508998291e-06 8.6771867645096449e-06 1.7585385874001739e-05 1.5158652499997477e-09 -8.9023257504990125e-12 3.2764871283614904e-07</Inertia>
+</MassProperties>
+<GeometryFile name="EndEffector_Simscape_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="Fake Motor" uid="Fake Motor*:*Default" version="125">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="Fake Motor.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.0085190850730733261</Mass>
+<CenterOfMass>0 0 0.0049120263457472753</CenterOfMass>
+<Inertia>7.097565514175305e-07 7.0975655141753029e-07 1.1884584267249951e-06 0 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="Fake Motor_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="Long Tru Nhua" uid="Long Tru Nhua*:*Default" version="131">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="Long Tru Nhua.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.00024504422698000367</Mass>
+<CenterOfMass>0 0.0077067307692307574 0</CenterOfMass>
+<Inertia>8.1894769201136224e-09 5.6383734150302858e-09 8.1894769201136257e-09 0 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="Long Tru Nhua_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="Male Rod End Bearing HS" uid="Male Rod End Bearing HS*:*Default" version="189">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="Male Rod End Bearing HS.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.0010623035797110677</Mass>
+<CenterOfMass>3.806094629224818e-08 8.9729339980740057e-10 0.010167437140126067</CenterOfMass>
+<Inertia>1.4757072769805476e-07 1.6299624043171661e-07 2.0267101506621445e-08 3.7624671007549796e-14 6.2937813774113325e-14 9.9868171856561594e-14</Inertia>
+</MassProperties>
+<GeometryFile name="Male Rod End Bearing HS_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="PartARM" uid="PartARM*:*Default" version="131">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="PartARM.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.010582248503070962</Mass>
+<CenterOfMass>-0.0052691400650167596 8.0155934370219483e-05 0.004000000000000001</CenterOfMass>
+<Inertia>2.0552984812760607e-06 3.4806559378088628e-06 5.4202454795403966e-06 0 0 1.231137439459302e-08</Inertia>
+</MassProperties>
+<GeometryFile name="PartARM_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="PartKhoaTruc" uid="PartKhoaTruc*:*Default" version="152">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="PartKhoaTruc.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.0016917079632679489</Mass>
+<CenterOfMass>0 0.00031344314392762503 0.0026986158410881589</CenterOfMass>
+<Inertia>6.2348682305258454e-08 6.0590276517561983e-08 1.1624764548774856e-07 1.5165168963596827e-09 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="PartKhoaTruc_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="Short Tru Nhua" uid="Short Tru Nhua*:*Default" version="135">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="Short Tru Nhua.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.00016179202165987402</Mass>
+<CenterOfMass>0 0.005034789644012938 0</CenterOfMass>
+<Inertia>3.3991710557901761e-09 3.8411860676360705e-09 3.3991710557901777e-09 0 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="Short Tru Nhua_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+<Part name="TayDuoi" uid="TayDuoi*:*Default" version="261">
+<ModelUnits mass="kilogram" length="millimeter"/>
+<PartFile name="TayDuoi.SLDPRT" type="SolidWorks Part"/>
+<MassProperties>
+<Mass>0.0012947288723606934</Mass>
+<CenterOfMass>0 0 0.157</CenterOfMass>
+<Inertia>1.064239485224362e-05 1.064239485224362e-05 8.9417212747410379e-09 0 0 0</Inertia>
+</MassProperties>
+<GeometryFile name="TayDuoi_Default_sldprt.STEP" type="STEP"/>
+<VisualProperties>
+<Ambient r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Diffuse r="0.792156862745098" g="0.81960784313725488" b="0.93333333333333335" a="1"/>
+<Specular r="0.396078431372549" g="0.40980392156862744" b="0.46666666666666667" a="1"/>
+<Emissive r="0" g="0" b="0" a="1"/>
+<Shininess>0.3125</Shininess>
+</VisualProperties>
+</Part>
+</Parts>
+</SimscapeMultibodyImportXML>
