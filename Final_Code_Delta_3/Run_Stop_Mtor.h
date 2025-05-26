@@ -13,6 +13,24 @@ void StopMotor_3() {
   digitalWrite(PUL_PIN_3, LOW);
 }
 
+void StopAllMotors() {
+  emergencyStop = true;  // Bật cờ dừng khẩn cấp
+  
+  motorRunning_1 = false;
+  motorRunning_2 = false;
+  motorRunning_3 = false;
+
+  // Ngắt các xung đang phát
+  digitalWrite(PUL_PIN_1, LOW);
+  digitalWrite(PUL_PIN_2, LOW);
+  digitalWrite(PUL_PIN_3, LOW);
+  
+  // Reset số xung còn lại
+  nPulse_1 = 0;
+  nPulse_2 = 0;
+  nPulse_3 = 0;
+}
+
 void Stop_toggle()
 {
   if (digitalRead(limit_1) == LOW) {
@@ -57,14 +75,14 @@ void updateMotorParameters(float tf, float angle_deg_1, float angle_deg_2, float
 //   Serial.print(delay_run_spd_2); Serial.print(", "); Serial.println(delay_run_spd_3);
 }
 
-void StopAllMotors() {
-  motorRunning_1 = false;
-  motorRunning_2 = false;
-  motorRunning_3 = false;
-  digitalWrite(PUL_PIN_1, LOW);
-  digitalWrite(PUL_PIN_2, LOW);
-  digitalWrite(PUL_PIN_3, LOW);
-}
+// void StopAllMotors() {
+//   motorRunning_1 = false;
+//   motorRunning_2 = false;
+//   motorRunning_3 = false;
+//   digitalWrite(PUL_PIN_1, LOW);
+//   digitalWrite(PUL_PIN_2, LOW);
+//   digitalWrite(PUL_PIN_3, LOW);
+// }
 
 unsigned long lastPulseTime_1 = 0;
 void RunMotor_1()

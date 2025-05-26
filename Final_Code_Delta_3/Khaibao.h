@@ -72,4 +72,5 @@ float currentPosition[3] = {0, 0, -307.38}; // Khởi tạo vị trí ban đầu
 
 long delta_1 = 0;
 bool enable_manual = true;
+bool emergencyStop = false;  // Thêm biến này ở phần khai báo toàn cục
 unsigned long now,previous,tf_end;

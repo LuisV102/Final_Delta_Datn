@@ -6,6 +6,8 @@
 #include "Set_Home.h"
 #include "Trajectory_2point.h"
 
+bool manualControlEnabled = false;  // Flag to track if manual control is enabled
+
 void setup() {
   // Khởi tạo chân IO
   pinMode(PUL_PIN_1, OUTPUT);
@@ -42,6 +44,8 @@ void setup() {
   currentPosition[1] = 0;
   currentPosition[2] = -307.38; // Độ cao home
 
+  emergencyStop = false; // Reset cờ dừng khẩn cấp khi khởi động
+
   Serial.begin(9600);
   Serial.println("System Ready. Send commands in format: P0:x,y,z;Pf:x,y,z;T:time");
 }
@@ -63,8 +67,24 @@ void loop() {
 }
 
 void processInputCommand(String input) {
-  if (input[0] == 's') {
-    StopAllMotors();
+  // Các lệnh start/stop luôn hoạt động bất kể trạng thái manualControlEnabled
+  if (input.equalsIgnoreCase("start")) {
+    manualControlEnabled = true;
+    emergencyStop = false;
+    Serial.println("Manual control ENABLED");
+    return;
+  }
+  else if (input.equalsIgnoreCase("stop") || input[0] == 's') {
+    manualControlEnabled = false;
+    StopAllMotors(); // Gọi hàm dừng khẩn cấp
+    Serial.println("Manual control DISABLED");
+    return;
+  }
+
+  // Các lệnh khác chỉ hoạt động khi manualControlEnabled = true
+  if (!manualControlEnabled) {
+    Serial.println("Manual control disabled. Send 'start' to enable");
+    return;
   }
   else if (input[0] == 'h') {
     SetHome();
@@ -87,16 +107,21 @@ void processInputCommand(String input) {
   } 
   else if (input.startsWith("P0:") && input.indexOf("Pf:") > 0 && input.indexOf("T:") > 0) {
     processPositionCommand(input);
-    // P0:0,0,-307.38;Pf:0,0,-400.5;T:1 -> No Colour
-    // P0:0,0,-307.38;Pf:50,50,-400.5;T:1;C:R -> with Colour
+    // P0:0,0,-307.38;Pf:0,0,-395;T:1 -> No Colour
+    // P0:0,0,-307.38;Pf:0,0,-395;T:1;C:R -> with Colour 
   }
   else if (input.startsWith("Next:")) {
+    Serial.print("X:");Serial.println(currentPosition[0]);
+    Serial.print("Y:");Serial.println(currentPosition[1]);
+    Serial.print("Z:");Serial.println(currentPosition[2]);
     processNextCycleCommand(input);
+    // Next:0,0,-395;T:1;C:R
   }
   else {
     processAngleCommand(input);
   }
 }
+
 
 void processPositionCommand(String input) {
   // Parse P0
@@ -141,7 +166,8 @@ void processPositionCommand(String input) {
 }
 
 void processAngleCommand(String input) {
-  if(enable_manual == false) return;
+  if(!manualControlEnabled) return;  // Thay enable_manual bằng manualControlEnabled
+  
   inString = "";
   for (int x = 0; x < input.length(); x++) {
     if ((input[x] == '-') || (input[x] == '.')) {

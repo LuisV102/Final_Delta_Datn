@@ -101,4 +101,9 @@ void SetHome()
     RunMotor_3();
   }
   delay(400);
+  currentPosition[0] = 0;
+  currentPosition[1] = 0;
+  currentPosition[2] = -307.38; // Độ cao home
+
+  emergencyStop = false;
 }

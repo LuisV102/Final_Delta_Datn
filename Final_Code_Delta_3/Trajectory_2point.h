@@ -1,5 +1,5 @@
 void waitUntilMotorsStop() {
-  while (motorRunning_1 || motorRunning_2 || motorRunning_3) {
+  while ((motorRunning_1 || motorRunning_2 || motorRunning_3) && !emergencyStop) {
     RunMotor_1();
     RunMotor_2();
     RunMotor_3();
@@ -8,44 +8,53 @@ void waitUntilMotorsStop() {
 }
 void Trajectory_2point(float tf, float x0, float y0, float z0, float xf, float yf, float zf)
 {
-  // Tính toán góc quay
-  float angles_start[3], angles_end[3];
-  if (inverse_kinematic(x0, y0, z0, angles_start) && 
-      inverse_kinematic(xf, yf, zf, angles_end)) {
+  if (Serial.available()) {
+    String input = Serial.readStringUntil('\n');
+    input.trim();
+    if (input[0] == 's' || input.equalsIgnoreCase("stop")) {
+      StopAllMotors();
+      return;
+    }
+  }
+  if(!emergencyStop)
+  {
+      // Tính toán góc quay
+    float angles_start[3], angles_end[3];
+    if (inverse_kinematic(x0, y0, z0, angles_start) && 
+        inverse_kinematic(xf, yf, zf, angles_end)) {
 
-    deg1_old = angles_end[0];
-    deg2_old = angles_end[1];
-    deg3_old = angles_end[2];
-    
-    float angle_deg_1 = angles_end[0] - angles_start[0];
-    float angle_deg_2 = angles_end[1] - angles_start[1];
-    float angle_deg_3 = angles_end[2] - angles_start[2];
+      deg1_old = angles_end[0];
+      deg2_old = angles_end[1];
+      deg3_old = angles_end[2];
+      
+      float angle_deg_1 = angles_end[0] - angles_start[0];
+      float angle_deg_2 = angles_end[1] - angles_start[1];
+      float angle_deg_3 = angles_end[2] - angles_start[2];
 
-    // Cập nhật thông số động cơH
-    updateMotorParameters(tf, angle_deg_1, angle_deg_2, angle_deg_3);
-    
-    // Khởi động động cơ
-    motorRunning_1 = (nPulse_1 > 0);
-    motorRunning_2 = (nPulse_2 > 0);
-    motorRunning_3 = (nPulse_3 > 0);
+      // Cập nhật thông số động cơH
+      updateMotorParameters(tf, angle_deg_1, angle_deg_2, angle_deg_3);
+      
+      // Khởi động động cơ
+      motorRunning_1 = (nPulse_1 > 0);
+      motorRunning_2 = (nPulse_2 > 0);
+      motorRunning_3 = (nPulse_3 > 0);
+
+      waitUntilMotorsStop();
+    }
   }
 }
 void Trajectory_4point(float tf, float x0, float y0, float z0, float xf, float yf, float zf, char colour)
 {
   // 1. Di chuyển đến phía trên vị trí vật thể
   Trajectory_2point(tf-t_up_down, x0, y0, z0, xf, yf, -365);
-  waitUntilMotorsStop();
   // delay(100);
   // 2. Hạ xuống nhặt vật
   Trajectory_2point(t_up_down, xf, yf, -365, xf, yf, -395);
-  waitUntilMotorsStop();
+
   digitalWrite(namcham, HIGH);
   delay(500);
-
   // 3. Nâng vật lên
   Trajectory_2point(t_up_down, xf, yf, -395, xf, yf, -365);
-  waitUntilMotorsStop();
-
   // 4. Di chuyển đến vị trí thả theo màu
   float dropX, dropY, dropZ;
   switch(colour) {
@@ -66,15 +75,15 @@ void Trajectory_4point(float tf, float x0, float y0, float z0, float xf, float y
   }
   // Di chuyển cao hơn Z
   Trajectory_2point(tf, xf, yf, -365, dropX, dropY, -365);
-  waitUntilMotorsStop();
+
   Trajectory_2point(t_up_down, dropX, dropY, -365, dropX, dropY, -395);
-  waitUntilMotorsStop();
+
   digitalWrite(namcham, LOW);
   // delay(100);
 
   // 6. Nâng lên và cập nhật vị trí hiện tại
   Trajectory_2point(t_up_down, dropX, dropY, -395, dropX, dropY, -365);
-  waitUntilMotorsStop();
+
     // Lưu vị trí hiện tại
   currentPosition[0] = dropX;
   currentPosition[1] = dropY;
