@@ -2,8 +2,10 @@ import cv2
 import numpy as np
 import serial
 import time
+
+
 def detect_objects_from_camera():
-################################################## HIỆU CHỈNH MÉO ẢNH ##################################################
+    ################################################## HIỆU CHỈNH MÉO ẢNH ##################################################
     ## camera_matrix là ma trận thông số nội chứa tiêu cự fx,fy hay nói cách khác là ma trận K là ma trận chuyển đổi
     ## điểm từ tọa độ tọa độ camera sang hệ tọa độ pixel, ma trận thông số ngoại là ma trận chuyển đổi tọa độ thực tế
     ## sang hệ tọa độ camera
@@ -23,32 +25,32 @@ def detect_objects_from_camera():
     #     [0, 0, 1]
     # ], dtype=np.float32)
 
-## Mảng chứa các hệ số méo dist_coeffs = [k1 ,k2, p1, p2] -> k1 hệ số méo xuyên tâm bậc 1, k2 là bậc 2, p1 hệ số méo tiếp
-## tuyến, p2 hệ số méo tếp tuyến
+    ## Mảng chứa các hệ số méo dist_coeffs = [k1 ,k2, p1, p2] -> k1 hệ số méo xuyên tâm bậc 1, k2 là bậc 2, p1 hệ số méo tiếp
+    ## tuyến, p2 hệ số méo tếp tuyến
     # dist_coeffs = np.array([0.0430, 0.4256, 0.0, 0.0], dtype=np.float32)
     dist_coeffs = np.array([0.0379, 0.4248, 0.0, 0.0], dtype=np.float32)
     # dist_coeffs = np.array([0, 0, 0.0, 0.0], dtype=np.float32)
 
-############################################# THIẾT LẬP VIDEO VÀ VÙNG XỬ LÝ#############################################
+    ############################################# THIẾT LẬP VIDEO VÀ VÙNG XỬ LÝ#############################################
     cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-############################################ KHAI BÁO CỔNG ĐANG CẮM ARDUINO ############################################
+    ############################################ KHAI BÁO CỔNG ĐANG CẮM ARDUINO ############################################
     ser = serial.Serial('COM5', 9600)  # Đổi COM nếu cần
 
     start_time = None
     end_time = None
     object_passed_bottom = False  # Đánh dấu trạng thái đã qua bottom line
 
-############################################ CẤU HÌNH ROI (REGION OF INTEREST) #########################################
-    height_roi = [0,720]
-    width_roi = [255,760]
+    ############################################ CẤU HÌNH ROI (REGION OF INTEREST) #########################################
+    height_roi = [0, 480]
+    width_roi = [100, 389]
     roi_x1, roi_y1, roi_x2, roi_y2 = width_roi[0], height_roi[0], width_roi[1], height_roi[1]
 
-    y_top = 120
-    y_trigger = 300
-    y_bottom = 600
+    y_top = 80
+    y_trigger = 200
+    y_bottom = 400
     calibration_data = []
 
     # Variables for time calculation
@@ -59,40 +61,40 @@ def detect_objects_from_camera():
     distance_trigger_to_top = y_trigger - y_top  # in pixels
     predicted_time = 0
 
-    pixel_to_mm = 100/(width_roi[1]-width_roi[0])  # 100 Là độ rộng của băng tải
+    pixel_to_mm = 100 / (width_roi[1] - width_roi[0])  # 100 Là độ rộng của băng tải
 
     # Object tracking variables
     current_object = None
     object_color = None
-################################################# VÙNG MÀU CẦN NHẬN DIỆN ###############################################
+    ################################################# VÙNG MÀU CẦN NHẬN DIỆN ###############################################
     color_ranges = {
         'red': ([0, 70, 50], [10, 255, 255], [160, 70, 50], [180, 255, 255]),
         'green': ([40, 70, 50], [80, 255, 255]),
-        'gold': ([30, 0, 60], [110, 50, 255], [140,4,50], [160,6,50]),
+        'yold': ([30, 0, 60], [110, 50, 255], [140, 4, 50], [160, 6, 50]),
     }
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
-############ Cắt vùng ROI -> Chuyển sang HSV -> Tạo mask cho từng màu -> Tìm cạnh, xử lý hình dạng, màu sắc ############
-############################################# CẮT VÙNG ROI CỦA TỪNG FRAME ##############################################
+        ############ Cắt vùng ROI -> Chuyển sang HSV -> Tạo mask cho từng màu -> Tìm cạnh, xử lý hình dạng, màu sắc ############
+        ############################################# CẮT VÙNG ROI CỦA TỪNG FRAME ##############################################
         cv2.rectangle(frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
-        cv2.line(frame, (roi_x1, 600), (roi_x2, 600), (255, 0, 255), 2)
-        cv2.putText(frame, "Bottom line", (roi_x1 + 10, 595), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
+        cv2.line(frame, (roi_x1, y_bottom), (roi_x2, y_bottom), (255, 0, 255), 2)
+        cv2.putText(frame, "Bottom line", (roi_x1 + 10, y_bottom - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 255), 2)
 
         cv2.line(frame, (roi_x1, y_trigger), (roi_x2, y_trigger), (0, 255, 255), 2)
         cv2.putText(frame, "Trigger line", (roi_x1 + 10, y_trigger - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255),
                     2)
-        cv2.line(frame, (roi_x1, 120), (roi_x2, 120), (255, 0, 0), 2)
-        cv2.putText(frame, "Top line", (roi_x1 + 10, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
+        cv2.line(frame, (roi_x1, y_top), (roi_x2, y_top), (255, 0, 0), 2)
+        cv2.putText(frame, "Top line", (roi_x1 + 10, y_top - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 0, 0), 2)
 
         roi = frame[roi_y1:roi_y2, roi_x1:roi_x2]
         hsb = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
         combined_mask = np.zeros(roi.shape[:2], dtype=np.uint8)
 
         for color_name, ranges in color_ranges.items():
-            if color_name == 'red'or color_name == 'gold':
+            if color_name == 'red' or color_name == 'yold':
                 lower1, upper1, lower2, upper2 = ranges
                 mask1 = cv2.inRange(hsb, np.array(lower1), np.array(upper1))
                 mask2 = cv2.inRange(hsb, np.array(lower2), np.array(upper2))
@@ -140,7 +142,7 @@ def detect_objects_from_camera():
 
                     if distance > max_allowed_distance:
                         continue  # Bỏ qua nếu trọng tâm lệch quá xa
-                        
+
                     # -- Tiếp tục xử lý nếu hợp lệ --
                     mask_cnt = np.zeros(roi.shape[:2], dtype=np.uint8)
                     cv2.drawContours(mask_cnt, [cnt], -1, 255, thickness=cv2.FILLED)
@@ -181,6 +183,7 @@ def detect_objects_from_camera():
 
                     calib_x = P_OA[0, 0]
                     calib_y = P_OA[1, 0]
+                    calib_z = P_OA[2, 0]
 
                     # --- Thêm vào mảng dữ liệu ---
                     calibration_data.append(calib_x)
@@ -190,7 +193,12 @@ def detect_objects_from_camera():
                         timer_started = True
                         start_time = time.time()
                         current_object = (cx, cy)
-                        object_color = color_name[0].upper()  # Get first letter (R, G, Y)
+                        # object_color = color_name[0].upper()  # Get first letter (R, G, Y)
+                        # Xác định mã màu gửi đến Arduino
+                        if color_name == 'yold':
+                            object_color = 'Y'  # Gold → 'Y'
+                        else:
+                            object_color = color_name[0].upper()  # Red → 'R', Green → 'G'
 
                     # Check if object passes trigger line (stop timer and calculate)
                     if timer_started and roi_y1 + cy <= y_trigger:
@@ -200,19 +208,19 @@ def detect_objects_from_camera():
                         # Calculate distance traveled (from bottom to trigger line)
                         distance_pixels = y_bottom - y_trigger
                         distance_mm = distance_pixels * (
-                                    210 / (y_bottom - y_top))  # Assuming 210mm is the real distance
+                                100 / (width_roi[1] - width_roi[0]))
 
                         # Calculate velocity (mm/s)
                         velocity = distance_mm / elapsed_time
 
                         # Calculate predicted time to reach top line
                         distance_to_top = y_trigger - y_top
-                        distance_to_top_mm = distance_to_top * (210 / (y_bottom - y_top))
+                        distance_to_top_mm = distance_to_top * (100 / (width_roi[1] - width_roi[0]))
                         predicted_time = distance_to_top_mm / velocity
 
                         # Send data to Arduino
                         if current_object:
-                            command = f"Next:({calib_x:.1f},{calib_y:.1f});T:{predicted_time:.2f};C:{object_color}\n"
+                            command = f"Next:{calib_x:.1f},{calib_y:.1f},{calib_z:.1f};T:{predicted_time:.2f};C:{object_color}\n"
                             ser.write(command.encode())
                             print(f"Sent to Arduino: {command.strip()}")
 
@@ -221,7 +229,7 @@ def detect_objects_from_camera():
                         current_object = None
                         object_color = None
 
-                    robot_coords = f"Robot: ({P_OA[0,0]:.1f}, {P_OA[1,0]:.1f}, {P_OA[2,0]:.1f})"
+                    robot_coords = f"Robot: ({P_OA[0, 0]:.1f}, {P_OA[1, 0]:.1f}, {P_OA[2, 0]:.1f})"
                     cv2.putText(frame, robot_coords, (roi_x1 + x, roi_y1 + y + h + 60),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
                     cv2.putText(frame, f"Center: ({cx}, {cy})", (roi_x1 + x, roi_y1 + y + h + 40),
@@ -231,7 +239,8 @@ def detect_objects_from_camera():
                     if velocity > 0:
                         cv2.putText(frame, f"Velocity: {velocity:.1f} mm/s", (roi_x1 + x, roi_y1 + y + h + 80),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
-                        cv2.putText(frame, f"Predicted time: {predicted_time:.2f} s", (roi_x1 + x, roi_y1 + y + h + 100),
+                        cv2.putText(frame, f"Predicted time: {predicted_time:.2f} s",
+                                    (roi_x1 + x, roi_y1 + y + h + 100),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
 
                 epsilon = 0.04 * cv2.arcLength(cnt, True)
@@ -264,6 +273,7 @@ def detect_objects_from_camera():
     cap.release()
     ser.close()
     cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     detect_objects_from_camera()
