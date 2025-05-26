@@ -29,6 +29,7 @@ const int limit_1 = 34;
 const int limit_2 = 36;
 const int limit_3 = 38;
 const int namcham = 40;
+const int bangtai = 42;
 
 // Biến toàn cục
 volatile long encoderPosition_1 = 0;

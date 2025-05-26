@@ -15,6 +15,7 @@ void setup() {
   pinMode(PUL_PIN_3, OUTPUT);
   pinMode(DIR_PIN_3, OUTPUT);
   pinMode(namcham, OUTPUT);
+  pinMode(bangtai, OUTPUT);
 
   // Khởi tạo encoder
   pinMode(pinA_1, INPUT_PULLUP);
@@ -76,6 +77,14 @@ void processInputCommand(String input) {
     digitalWrite(namcham, LOW);
     Serial.println("Magnet OFF");
   }
+  else if (input[0] == 'r') {
+    digitalWrite(bangtai, HIGH);
+    Serial.println("Conveyor ON");
+  }
+  else if (input[0] == 'o') {
+    digitalWrite(bangtai, LOW);
+    Serial.println("Conveyor off");
+  } 
   else if (input.startsWith("P0:") && input.indexOf("Pf:") > 0 && input.indexOf("T:") > 0) {
     processPositionCommand(input);
     // P0:0,0,-307.38;Pf:0,0,-400.5;T:1 -> No Colour
