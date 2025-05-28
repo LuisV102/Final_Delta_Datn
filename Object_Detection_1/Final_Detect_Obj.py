@@ -28,7 +28,7 @@ def detect_objects_from_camera():
     ## Mảng chứa các hệ số méo dist_coeffs = [k1 ,k2, p1, p2] -> k1 hệ số méo xuyên tâm bậc 1, k2 là bậc 2, p1 hệ số méo tiếp
     ## tuyến, p2 hệ số méo tếp tuyến
     # dist_coeffs = np.array([0.0430, 0.4256, 0.0, 0.0], dtype=np.float32)
-    dist_coeffs = np.array([0.0379, 0.4248, 0.0, 0.0], dtype=np.float32)
+    dist_coeffs = np.array([0.0379, 0.0248, 0.0, 0.0], dtype=np.float32) ##[0.0379, 0.4248, 0.0, 0.0]
     # dist_coeffs = np.array([0, 0, 0.0, 0.0], dtype=np.float32)
 
     ############################################# THIẾT LẬP VIDEO VÀ VÙNG XỬ LÝ#############################################
@@ -37,7 +37,7 @@ def detect_objects_from_camera():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     ############################################ KHAI BÁO CỔNG ĐANG CẮM ARDUINO ############################################
-    ser = serial.Serial('COM5', 9600)  # Đổi COM nếu cần
+    # ser = serial.Serial('COM5', 9600)  # Đổi COM nếu cần
 
     start_time = None
     end_time = None
@@ -51,7 +51,11 @@ def detect_objects_from_camera():
     y_top = 80
     y_trigger = 200
     y_bottom = 400
+    real_distance_trig_to_top = 39.5  # mm
+    real_distance_bottom_to_trig = 68  # mm
     calibration_data = []
+    _last_command_time = 0  # Thời điểm gửi lệnh cuối cùng
+    _command_sent = False  # Cờ báo hiệu đã gửi lệnh
 
     # Variables for time calculation
     timer_started = False
@@ -164,18 +168,33 @@ def detect_objects_from_camera():
                     undistorted = cv2.undistortPoints(distorted_point, camera_matrix, dist_coeffs, P=camera_matrix)
                     undistorted = undistorted[0][0]
 
-                    Z = 210
-                    ## Độ dài tiêu cự theo chiều x,y
+                    # Z = 210
+                    # ## Độ dài tiêu cự theo chiều x,y
+                    # fx, fy = camera_matrix[0, 0], camera_matrix[1, 1]
+                    # ## Độ lệch pixel cx,cy
+                    # cx_intr, cy_intr = camera_matrix[0, 2], camera_matrix[1, 2]
+                    # real_x = (undistorted[0] - cx_intr) * Z / fx
+                    # real_y = (undistorted[1] - cy_intr) * Z / fy
+                    #
+                    # P_CA = np.array([[real_x], [real_y], [Z], [1]])
+                    # T_0C = np.array([
+                    #     [0, -1, 0, -160],
+                    #     [-1, 0, 0, -30],
+                    #     [0, 0, -1, -185],
+                    #     [0, 0, 0, 1]
+                    # ])
+                    Z_CONST = 263  # Chiều cao giả định của vật thể so với camera
                     fx, fy = camera_matrix[0, 0], camera_matrix[1, 1]
-                    ## Độ lệch pixel cx,cy
                     cx_intr, cy_intr = camera_matrix[0, 2], camera_matrix[1, 2]
-                    real_x = (undistorted[0] - cx_intr) * Z / fx
-                    real_y = (undistorted[1] - cy_intr) * Z / fy
+                    real_x = (undistorted[0] - cx_intr) * Z_CONST / fx
+                    real_y = (undistorted[1] - cy_intr) * Z_CONST / fy
 
-                    P_CA = np.array([[real_x], [real_y], [Z], [1]])
+                    # real_x = real_x - 100
+                    # real_y = real_y - 50
+                    P_CA = np.array([[real_x], [real_y], [Z_CONST], [1]])
                     T_0C = np.array([
-                        [0, -1, 0, -160],
-                        [-1, 0, 0, -30],
+                        [0, -1, 0, -178],
+                        [-1, 0, 0, -70],
                         [0, 0, -1, -185],
                         [0, 0, 0, 1]
                     ])
@@ -184,6 +203,8 @@ def detect_objects_from_camera():
                     calib_x = P_OA[0, 0]
                     calib_y = P_OA[1, 0]
                     calib_z = P_OA[2, 0]
+                    if calib_y < 0:
+                        calib_y = calib_y - 20
 
                     # --- Thêm vào mảng dữ liệu ---
                     calibration_data.append(calib_x)
@@ -229,7 +250,7 @@ def detect_objects_from_camera():
                         current_object = None
                         object_color = None
 
-                    robot_coords = f"Robot: ({P_OA[0, 0]:.1f}, {P_OA[1, 0]:.1f}, {P_OA[2, 0]:.1f})"
+                    robot_coords = f"Robot: ({calib_x:.1f}, {calib_y:.1f}, {calib_z:.1f})"
                     cv2.putText(frame, robot_coords, (roi_x1 + x, roi_y1 + y + h + 60),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
                     cv2.putText(frame, f"Center: ({cx}, {cy})", (roi_x1 + x, roi_y1 + y + h + 40),
@@ -271,7 +292,7 @@ def detect_objects_from_camera():
             break
 
     cap.release()
-    ser.close()
+    # ser.close()
     cv2.destroyAllWindows()
 
 
