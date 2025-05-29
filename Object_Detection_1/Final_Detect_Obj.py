@@ -10,31 +10,42 @@ def detect_objects_from_camera():
     ## điểm từ tọa độ tọa độ camera sang hệ tọa độ pixel, ma trận thông số ngoại là ma trận chuyển đổi tọa độ thực tế
     ## sang hệ tọa độ camera
     # camera_matrix = np.array([
-    #     [1558.0, 0, 661.8934],
-    #     [0, 1559.5, 408.2412],
+    #     [1501.8, 0, 659.018],
+    #     [0, 1504.6, 391.2912],
     #     [0, 0, 1]
     # ], dtype=np.float32)
     camera_matrix = np.array([
-        [1501.8, 0, 659.018],
-        [0, 1504.6, 391.2912],
+        [815.98760425, 0, 337.32019432],
+        [0, 816.18913792, 241.58831339],
         [0, 0, 1]
     ], dtype=np.float32)
-    # camera_matrix = np.array([
-    #     [1, 0, 1],
-    #     [0, 1, 1],
-    #     [0, 0, 1]
-    # ], dtype=np.float32)
 
     ## Mảng chứa các hệ số méo dist_coeffs = [k1 ,k2, p1, p2] -> k1 hệ số méo xuyên tâm bậc 1, k2 là bậc 2, p1 hệ số méo tiếp
     ## tuyến, p2 hệ số méo tếp tuyến
     # dist_coeffs = np.array([0.0430, 0.4256, 0.0, 0.0], dtype=np.float32)
-    dist_coeffs = np.array([0.0379, 0.0248, 0.0, 0.0], dtype=np.float32) ##[0.0379, 0.4248, 0.0, 0.0]
-    # dist_coeffs = np.array([0, 0, 0.0, 0.0], dtype=np.float32)
+    # dist_coeffs = np.array([0.0379, 0.0248, 0.0, 0.0], dtype=np.float32) ##[0.0379, 0.4248, 0.0, 0.0]
+    dist_coeffs = np.array([0.13648701,-0.15912073,-0.01095812,0.00887588,-3.32255901], dtype=np.float32) #1
 
     ############################################# THIẾT LẬP VIDEO VÀ VÙNG XỬ LÝ#############################################
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    ############################################# TỐI ƯU KHỞI TẠO CAMERA ##################################################
+    cap = None
+    for i in range(3):  # Thử tối đa 3 lần
+        cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)  # Dùng DirectShow giúp mở nhanh trên Windows
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+        time.sleep(0.3)  # Cho camera ổn định
+
+        ret, _ = cap.read()
+        if ret:
+            print("[INFO] Camera ready.")
+            break
+        else:
+            cap.release()
+            print("[WARN] Retry opening camera...")
+
+    if cap is None or not cap.isOpened():
+        print("[ERROR] Cannot open camera.")
+        return
 
     ############################################ KHAI BÁO CỔNG ĐANG CẮM ARDUINO ############################################
     # ser = serial.Serial('COM5', 9600)  # Đổi COM nếu cần
@@ -193,9 +204,9 @@ def detect_objects_from_camera():
                     # real_y = real_y - 50
                     P_CA = np.array([[real_x], [real_y], [Z_CONST], [1]])
                     T_0C = np.array([
-                        [0, -1, 0, -178],
-                        [-1, 0, 0, -70],
-                        [0, 0, -1, -185],
+                        [0, -1, 0, -160],
+                        [-1, 0, 0, -30],
+                        [0, 0, -1, -125],
                         [0, 0, 0, 1]
                     ])
                     P_OA = T_0C @ P_CA
@@ -203,11 +214,12 @@ def detect_objects_from_camera():
                     calib_x = P_OA[0, 0]
                     calib_y = P_OA[1, 0]
                     calib_z = P_OA[2, 0]
-                    if calib_y < 0:
-                        calib_y = calib_y - 20
+                    # if calib_y < 0:
+                    #     calib_y = calib_y - 20
 
                     # --- Thêm vào mảng dữ liệu ---
                     calibration_data.append(calib_x)
+                    calibration_data.append(calib_y)
 
                     # Check if object passes bottom line (start timer)
                     if roi_y1 + cy >= y_bottom and not timer_started:
@@ -242,7 +254,7 @@ def detect_objects_from_camera():
                         # Send data to Arduino
                         if current_object:
                             command = f"Next:{calib_x:.1f},{calib_y:.1f},{calib_z:.1f};T:{predicted_time:.2f};C:{object_color}\n"
-                            ser.write(command.encode())
+                            # ser.write(command.encode())
                             print(f"Sent to Arduino: {command.strip()}")
 
                         # Reset for next object
