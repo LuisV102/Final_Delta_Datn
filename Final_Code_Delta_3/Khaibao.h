@@ -25,10 +25,10 @@
 String inString = "";
 
 // Limit switches
-const int limit_1 = 34;
-const int limit_2 = 36;
-const int limit_3 = 38;
-const int namcham = 40;
+const int limit_1 = 49;
+const int limit_2 = 51;
+const int limit_3 = 53;
+const int namcham = 44;
 const int bangtai = 42;
 
 // Biến toàn cục
@@ -74,3 +74,5 @@ long delta_1 = 0;
 bool enable_manual = true;
 bool emergencyStop = false;  // Thêm biến này ở phần khai báo toàn cục
 unsigned long now,previous,tf_end;
+
+unsigned long lastPrintTime = 0;

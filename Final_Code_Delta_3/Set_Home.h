@@ -1,5 +1,6 @@
 void SetHome()
 {
+  if (emergencyStop) return;
   digitalWrite(DIR_PIN_1,0);
   digitalWrite(DIR_PIN_2,0);
   digitalWrite(DIR_PIN_3,0);
@@ -8,10 +9,10 @@ void SetHome()
   bool yHomed = false; // Cờ để kiểm tra trục Y đã về gốc
   bool zHomed = false; // Cờ để kiểm tra trục Z đã về gốc
 
-  while (!xHomed || !yHomed || !zHomed)
+  while (!xHomed || !yHomed || !zHomed && !emergencyStop) 
   {
     // Set home cho motor 1
-    if (!xHomed)
+    if (!xHomed && !emergencyStop)
     {
       if (digitalRead(limit_1) == LOW)
       {
@@ -33,7 +34,7 @@ void SetHome()
       }
     }
     // Set home cho motor 2
-    if (!yHomed)
+    if (!yHomed && !emergencyStop)
     {
       if (digitalRead(limit_2) == LOW)
       {
@@ -55,7 +56,7 @@ void SetHome()
       }
     }
     // Set home cho motor 3
-    if (!zHomed)
+    if (!zHomed && !emergencyStop)
     {
       if (digitalRead(limit_3) == LOW)
       {
@@ -76,6 +77,10 @@ void SetHome()
         delayMicroseconds(delay_home_spd);
       }
     }
+  }
+  if (emergencyStop) {
+    StopAllMotors();
+    return;
   }
 
   // Đặt lại delay_run_spd_x về giá trị mặc định cho các chuyển động độc lập (hoặc giá trị mong muốn sau homing)
@@ -100,7 +105,11 @@ void SetHome()
     RunMotor_2();
     RunMotor_3();
   }
-  delay(400);
+  delay(800);
+  SetPosition_1();
+  SetPosition_2();
+  SetPosition_3();
+  
   currentPosition[0] = 0;
   currentPosition[1] = 0;
   currentPosition[2] = -307.38; // Độ cao home

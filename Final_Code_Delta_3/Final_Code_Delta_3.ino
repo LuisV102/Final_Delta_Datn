@@ -59,7 +59,14 @@ void loop() {
     input.trim();
     processInputCommand(input);
   }
-
+    if (millis() - lastPrintTime >= 2000) 
+  { 
+      Serial.print("Encoder 1: "); Serial.print(encoderPosition_1*45/9900);  Serial.print("  ");
+      Serial.print("Encoder 2: "); Serial.print(encoderPosition_2*45/9900);  Serial.print("  ");
+      Serial.print("Encoder 3: "); Serial.println(encoderPosition_3*45/9900); 
+      // (long)encoderCalibrated_1 
+      lastPrintTime = millis();
+  }
   // Chạy các động cơ
   RunMotor_1();
   RunMotor_2();
@@ -68,22 +75,24 @@ void loop() {
 
 void processInputCommand(String input) {
   // Các lệnh start/stop luôn hoạt động bất kể trạng thái manualControlEnabled
+  // Các lệnh start/stop luôn hoạt động bất kể trạng thái manualControlEnabled
   if (input.equalsIgnoreCase("start")) {
     manualControlEnabled = true;
-    emergencyStop = false;
+    emergencyStop = false;  // Reset trạng thái dừng khẩn cấp
     Serial.println("Manual control ENABLED");
     return;
   }
   else if (input.equalsIgnoreCase("stop") || input[0] == 's') {
     manualControlEnabled = false;
+    emergencyStop = true;  // Kích hoạt dừng khẩn cấp
     StopAllMotors(); // Gọi hàm dừng khẩn cấp
-    Serial.println("Manual control DISABLED");
+    Serial.println("EMERGENCY STOP ACTIVATED");
     return;
   }
 
-  // Các lệnh khác chỉ hoạt động khi manualControlEnabled = true
-  if (!manualControlEnabled) {
-    Serial.println("Manual control disabled. Send 'start' to enable");
+  // Nếu đang trong trạng thái dừng khẩn cấp, không xử lý bất kỳ lệnh nào khác
+  if (emergencyStop) {
+    Serial.println("System in EMERGENCY STOP state. Send 'start' to reset");
     return;
   }
   else if (input[0] == 'h') {

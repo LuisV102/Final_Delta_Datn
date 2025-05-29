@@ -29,6 +29,10 @@ void StopAllMotors() {
   nPulse_1 = 0;
   nPulse_2 = 0;
   nPulse_3 = 0;
+
+    // Tắt tất cả thiết bị ngoại vi
+  digitalWrite(namcham, LOW);
+  digitalWrite(bangtai, LOW);
 }
 
 void Stop_toggle()
@@ -87,6 +91,10 @@ void updateMotorParameters(float tf, float angle_deg_1, float angle_deg_2, float
 unsigned long lastPulseTime_1 = 0;
 void RunMotor_1()
 {
+  if (emergencyStop) {
+    StopMotor_1();
+    return;
+  }
   if (motorRunning_1 && nPulse_1 > 0) 
   {
     unsigned long now = micros();
@@ -110,6 +118,10 @@ void RunMotor_1()
 unsigned long lastPulseTime_2 = 0;
 void RunMotor_2()
 {
+  if (emergencyStop) {
+    StopMotor_2();
+    return;
+  }
   if (motorRunning_2 && nPulse_2 > 0) 
   {
     unsigned long now = micros();
@@ -133,6 +145,10 @@ void RunMotor_2()
 unsigned long lastPulseTime_3 = 0;
 void RunMotor_3()
 {
+  if (emergencyStop) {
+    StopMotor_3();
+    return;
+  }
   if (motorRunning_3 && nPulse_3 > 0) 
   {
     unsigned long now = micros();
