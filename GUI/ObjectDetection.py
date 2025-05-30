@@ -1,7 +1,10 @@
 import cv2
 import numpy as np
 import time
+import uuid  # Thêm thư viện để tạo ID duy nhất
 
+# Thêm biến toàn cục để theo dõi vật thể đã được đếm
+_counted_objects = set()
 # --- Các hằng số và biến toàn cục của module ---
 CAMERA_MATRIX = np.array([
     [815.98760425, 0, 337.32019432],
@@ -41,6 +44,7 @@ _command_sent = False
 _predicted_time_to_top = 0
 _calibration_data_list = []
 _command_cooldown_duration = 3.0  # Thời gian cooldown sau khi gửi lệnh (giây)
+_current_object_id = None
 
 # Ngưỡng diện tích tối thiểu cho contour được coi là hợp lệ
 MIN_CONTOUR_AREA = 150
@@ -70,7 +74,10 @@ def reset_detection_state():
     global _tracking_active, _start_time, _start_y, _max_velocity
     global _current_object_info, _object_color_detected, _last_command_time
     global _command_sent, _predicted_time_to_top, _calibration_data_list
+    global _counted_objects_id
 
+
+    _current_object_id = None
     _tracking_active = False
     _start_time = 0
     _start_y = 0
@@ -81,8 +88,6 @@ def reset_detection_state():
     _command_sent = False
     _predicted_time_to_top = 0
     _calibration_data_list = []
-    # print("Object detection state reset.")
-
 
 def process_frame_for_detection(input_frame, ser_instance):
     """
@@ -96,7 +101,9 @@ def process_frame_for_detection(input_frame, ser_instance):
     global _tracking_active, _start_time, _start_y, _max_velocity
     global _current_object_info, _object_color_detected, _last_command_time
     global _command_sent, _predicted_time_to_top, _calibration_data_list
-
+    global _predicted_time_robot_reach
+    global _current_object_id
+    _predicted_time_robot_reach = 0
 
     if input_frame is None:
         return None
@@ -168,7 +175,7 @@ def process_frame_for_detection(input_frame, ser_instance):
         color_name = best_color_name  # Gán lại color_name cho contour được chọn
 
         x, y, w, h = cv2.boundingRect(cnt)
-
+        text_x_base = ROI_X1 + x
         # --- Phần tính toán màu sắc trung bình và vẽ ---
         mask_cnt = np.zeros(roi.shape[:2], dtype=np.uint8)
         cv2.drawContours(mask_cnt, [cnt], -1, 255, thickness=cv2.FILLED)
@@ -228,6 +235,31 @@ def process_frame_for_detection(input_frame, ser_instance):
             # --- Xử lý logic tracking và tính toán vận tốc ---
             current_y_on_frame = cy_roi + ROI_Y1
 
+            # NHẬN DIỆN HÌNH DẠNG TRƯỚC KHI XỬ LÝ TRIGGER LINE
+            epsilon = 0.02 * cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, epsilon, True)
+            shape = "Unknown"
+
+            # Tính hull và độ lồi lõm
+            hull = cv2.convexHull(cnt)
+            area_cnt = cv2.contourArea(cnt)
+            area_hull = cv2.contourArea(hull)
+            solidity = float(area_cnt) / area_hull if area_hull != 0 else 0
+
+            if len(approx) == 3:
+                shape = "Triangle"
+            elif len(approx) == 4:
+                aspect_ratio = float(w) / h
+                shape = "Square" if 0.9 <= aspect_ratio <= 1.1 else "Rectangle"
+            elif 8 <= len(approx) <= 12 and solidity < 0.85:
+                shape = "Star"
+            elif len(approx) > 10 and solidity >= 0.85:
+                shape = "Circle"
+
+            # Hiển thị thông tin hình dạng và màu sắc
+            cv2.putText(frame, f"{color_name} {shape}", (text_x_base, ROI_Y1 + y - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, bgr_color_tuple, 2)
+
             # Bắt đầu tracking khi vật đi qua bottom line
             if current_y_on_frame >= Y_BOTTOM and not _tracking_active and not _command_sent:
                 _tracking_active = True
@@ -238,6 +270,7 @@ def process_frame_for_detection(input_frame, ser_instance):
                     _object_color_detected = 'Y'
                 else:
                     _object_color_detected = color_name[0].upper()
+                _current_object_id = str(uuid.uuid4())
 
             # Tính toán vận tốc khi vật đang di chuyển
             if _tracking_active and not _command_sent:
@@ -246,38 +279,55 @@ def process_frame_for_detection(input_frame, ser_instance):
 
                 if elapsed_time > 0:
                     distance_pixels = abs(current_y_on_frame - _start_y)
-                    # Ensure pixel_to_mm conversion is accurate based on your setup
-                    # For simplicity, assuming a fixed ratio, but real-world might need perspective correction
-                    # pixel_to_mm = (real_distance_bottom_to_trig + real_distance_trig_to_top) / (Y_BOTTOM - Y_TOP)
-                    # distance_mm = distance_pixels * pixel_to_mm
-                    distance_mm = distance_pixels * Z_CONST/fy
+                    distance_mm = distance_pixels * Z_CONST / fy
                     current_velocity = distance_mm / elapsed_time
 
-                    # Cập nhật vận tốc lớn nhất
                     if current_velocity > _max_velocity:
                         _max_velocity = current_velocity
-                        # Tính thời gian dự đoán đến top line khi có vận tốc mới
-                        distance_to_top_mm = real_distance_trig_to_top
+                        distance_to_top_mm = (Y_TRIGGER - Y_TOP) * Z_CONST / fy
                         _predicted_time_to_top = distance_to_top_mm / _max_velocity if _max_velocity > 0 else 0
-                        _predicted_time_robot_reach = _predicted_time_to_top-0.56
+                        _predicted_time_robot_reach = _predicted_time_to_top - 0.56
 
-
-                # Trong phần xử lý trigger line
+            # XỬ LÝ TRIGGER LINE (GỘP 2 PHẦN IF LẠI THÀNH 1)
             calib_x_top = calib_x_top + 25
-            if _tracking_active and current_y_on_frame <= Y_TRIGGER:
+            if _tracking_active and current_y_on_frame <= Y_TRIGGER and not _command_sent:
+                object_key = f"{color_name}_{shape.lower()}"
+
+                # Kiểm tra vật thể chưa được đếm
+                if _current_object_id is not None and object_key in _objects_memory:
+                    # Tạo key duy nhất cho vật thể này
+                    object_unique_key = f"{object_key}_{_current_object_id}"
+
+                    if object_unique_key not in _counted_objects:
+                        _objects_memory[object_key]['count'] += 1
+                        _counted_objects.add(object_unique_key)
+                        print(f"Đã phát hiện: {object_key}, Tổng số: {_objects_memory[object_key]['count']}")
+
+                # Gửi lệnh đến Arduino
                 if _max_velocity > 0 and ser_instance and ser_instance.is_open and _object_color_detected:
+                    if _predicted_time_robot_reach == 0:
+                        _predicted_time_robot_reach = 0.5
                     command = f"Next:{calib_x_top:.1f},{calib_y:.1f},{calib_z:.1f};T:{_predicted_time_robot_reach:.2f};C:{_object_color_detected}\n"
                     try:
                         ser_instance.write(command.encode())
                         print(f"Sent to Arduino: {command.strip()}")
-                        # Reset ngay lập tức để nhận vật thể mới
-                        reset_detection_state()  # Hoặc reset các biến thủ công như trên
+                        _command_sent = True
+                        reset_detection_state()
+                        _last_command_time = time.time()
                     except Exception as e:
                         print(f"Error sending to Arduino: {e}")
 
-                # Reset tracking sau khi gửi lệnh, để chuẩn bị cho vật thể tiếp theo sau cooldown
                 _tracking_active = False
                 _max_velocity = 0
+                _current_object_id = None  # Reset ID sau khi xử lý xong
+
+            # Hiển thị thông tin đếm lên frame
+            memory_text_y = 20
+            for obj_type, data in _objects_memory.items():
+                display_text = f"{obj_type}: {data['count']}"
+                cv2.putText(frame, display_text, (10, memory_text_y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+                memory_text_y += 20
 
             # --- Vẽ thông tin lên frame ---
             text_x_base = ROI_X1 + x
@@ -286,8 +336,6 @@ def process_frame_for_detection(input_frame, ser_instance):
             robot_coords_text = f"Robot: ({calib_x:.1f}, {calib_y:.1f}, {calib_z:.1f})"
             cv2.putText(frame, robot_coords_text, (text_x_base, text_y_base + 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
-            # cv2.putText(frame, f"Center(F): ({cx_frame}, {cy_frame})", (text_x_base, text_y_base + 40),
-            #             cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
 
 
     return frame
