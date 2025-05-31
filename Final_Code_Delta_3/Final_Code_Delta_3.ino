@@ -59,18 +59,18 @@ void loop() {
     input.trim();
     processInputCommand(input);
   }
-    if (millis() - lastPrintTime >= 2000) 
+  if (millis() - lastPrintTime >= 2000) 
   { 
-      Serial.print("Encoder 1: "); Serial.print(encoderPosition_1*45/9900);  Serial.print("  ");
-      Serial.print("Encoder 2: "); Serial.print(encoderPosition_2*45/9900);  Serial.print("  ");
-      Serial.print("Encoder 3: "); Serial.println(encoderPosition_3*45/9900); 
-      // (long)encoderCalibrated_1 
-      lastPrintTime = millis();
+    Serial.print("Encoder 1: "); Serial.print((float)encoderPosition_1 * 45 / 9900, 4);  Serial.print("  ");
+    Serial.print("Encoder 2: "); Serial.print((float)encoderPosition_2 * 45 / 9900, 4);  Serial.print("  ");
+    Serial.print("Encoder 3: "); Serial.println((float)encoderPosition_3 * 45 / 9900, 4); 
+    lastPrintTime = millis();
   }
   // Chạy các động cơ
   RunMotor_1();
   RunMotor_2();
   RunMotor_3();
+
 }
 
 void processInputCommand(String input) {

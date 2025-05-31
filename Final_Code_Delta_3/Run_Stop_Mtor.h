@@ -15,7 +15,7 @@ void StopMotor_3() {
 
 void StopAllMotors() {
   emergencyStop = true;  // Bật cờ dừng khẩn cấp
-  
+
   motorRunning_1 = false;
   motorRunning_2 = false;
   motorRunning_3 = false;

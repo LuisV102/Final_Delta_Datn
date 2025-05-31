@@ -89,9 +89,9 @@ void SetHome()
   delay_run_spd_2 = 5000;
   delay_run_spd_3 = 5000;
   
-  Degree_1new(9, 0);  // ~0.148 rad
-  Degree_2new(10.8, 0);   // ~0.209 rad
-  Degree_3new(10.8, 0);    // ~0.122 rad
+  Degree_1new(8.2, 0);  // ~0.148 rad
+  Degree_2new(9.8, 0);   // ~0.209 rad
+  Degree_3new(7.3, 0);    // ~0.122 rad
 
   // Cho phép loop() chạy tiếp để điều khiển motor
   motorRunning_1 = true;

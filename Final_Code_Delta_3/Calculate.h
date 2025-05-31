@@ -122,6 +122,7 @@ void Degree_3new(float deg, float deg_old)
   nPulse_3 = degree3 * 8 * pulperrev / 360;
   if (nPulse_3 > 0) motorRunning_3 = true;
 }
+
 // void trajectory_planning_2_point(float t, float* P0, float* Pf, float tf, float* x, float* y, float* z) {
 //   float delta_x = Pf[0] - P0[0];
 //   float delta_y = Pf[1] - P0[1];
