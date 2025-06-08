@@ -7,6 +7,12 @@ import ObjectDetection
 import time
 import threading
 
+# Biến toàn cục để lưu trữ các label đếm (nếu bạn cần cập nhật chúng từ nơi khác)
+# Cấu trúc: count_labels_widgets[row_idx][col_idx]
+# row_idx: 0=red, 1=green, 2=yellow
+# col_idx: 0=rec, 1=tri, 2=sqr
+count_labels_widgets = []
+
 # Biến cục bộ cho module này (dùng cho camera)
 # Đổi tên để tránh trùng với biến ở main nếu có
 bh_cap = None
@@ -138,14 +144,16 @@ def send_trajectory_handler(entry_x0, entry_y0, entry_z0, entry_c0,
         if not (-397 <= zf_val <= -307.38): messagebox.showerror("Lỗi",
                                                                  f"Zf={zf_val:.2f} nằm ngoài giới hạn robot"); return
 
-        base_data_segment = f"P0:{x0_val},{y0_val},{z0_val};Pf:{xf_val},{yf_val},{zf_val};T:{tf_val}"
+        # base_data_segment = f"P0:{x0_val},{y0_val},{z0_val};Pf:{xf_val},{yf_val},{zf_val};T:{tf_val}"
         data_to_send = ""
 
-        if c0_val and c0_val not in ['R', 'G', 'Y']:
-            messagebox.showerror("Lỗi", f"Nhập C0 là R(red), G(green) hoặc Y(yellow)")
-            return
+        if c0_val == "":
+            data_to_send = f"P0:{x0_val},{y0_val},{z0_val};Pf:{xf_val},{yf_val},{zf_val};T:{tf_val}"
+        elif c0_val in ['R', 'G', 'Y']:
+            data_to_send = f"Next:{xf_val},{yf_val},{zf_val};T:{tf_val};C:{c0_val}\r"
         else:
-            data_to_send = f"{base_data_segment}\r"
+            messagebox.showerror("Lỗi", "Giá trị C0 không hợp lệ. Vui lòng nhập R (Red), G (Green) hoặc Y (Yellow).")
+            return
 
         if send_command_func(data_to_send):
             entry_x0.delete(0, tk.END);
@@ -275,6 +283,7 @@ def update_frame_handler(label_cam_widget, serial_object):  # Thêm serial_objec
         if ret:
             # Gọi hàm xử lý từ ObjectDetection
             # Hàm này sẽ trả về frame đã được vẽ vời các thông tin nhận diện
+
             processed_frame = ObjectDetection.process_frame_for_detection(frame_from_cam, serial_object)
 
             if processed_frame is not None:
@@ -308,10 +317,10 @@ def toggle_namcham_handler(current_magnet_state, btn_namcham_widget, send_comman
     cmd = 'u\r' if current_magnet_state == 0 else 'd\r'
     if send_command_func(cmd): # gửi lệnh qua serial, chỉ tiếp tục code nếu True
         if current_magnet_state == 0:
-            btn_namcham_widget.config(text="ON MAG", bg="#3bd952")
+            btn_namcham_widget.config(text="OFF MAG", bg="#3bd952")
             return 1  # Trả về trạng thái mới
         else:
-            btn_namcham_widget.config(text="OFF MAG", bg="#eb3b3b")
+            btn_namcham_widget.config(text="ON MAG", bg="#eb3b3b")
             return 0  # Trả về trạng thái mới
     return None  # Trả về None nếu gửi lệnh thất bại, để không thay đổi trạng thái
 
@@ -320,10 +329,10 @@ def toggle_conveyor_handler(current_conveyor_state, btn_bangtai_widget, send_com
     cmd = 'r\r' if current_conveyor_state == 0 else 'o\r'  # Theo code gốc của bạn
     if send_command_func(cmd):
         if current_conveyor_state == 0:
-            btn_bangtai_widget.config(text="ON CONV", bg="#3bd952")
+            btn_bangtai_widget.config(text="OFF CONV", bg="#3bd952")
             return 1
         else:
-            btn_bangtai_widget.config(text="OFF CONV", bg="#eb3b3b")
+            btn_bangtai_widget.config(text="ON CONV", bg="#eb3b3b")
             return 0
     return None
 # --- HÀM MỚI CHO CHẾ ĐỘ AUTO ---

@@ -4,14 +4,14 @@ import serial
 import time
 import threading
 import FunctionButton as bh
-import cv2
 from PIL import Image, ImageTk
+import ObjectDetection as od
 
 home_set = False
 
 # Setup Serial
 try:
-    ser = serial.Serial('COM4', 9600)
+    ser = serial.Serial('COM4', 9600, timeout=1, write_timeout=1)
     time.sleep(1)
 except serial.SerialException as e:
     print(f"Error opening serial port: {e}")
@@ -21,7 +21,7 @@ except serial.SerialException as e:
 window = tk.Tk()
 window.title("GUI")
 window.configure(bg="#f0f0f5")
-# window.geometry("1200x850") # Bạn có thể thử đặt kích thước cửa sổ cố định nếu cần
+# window.geometry("1200x850") # đặt kích thước cửa sổ cố định
 
 font_title = ("Arial", 20, "bold")
 font_label = ("Arial", 12)
@@ -42,7 +42,7 @@ def toggle_mode():
         new_state_manual_buttons = tk.NORMAL  # Kích hoạt nút manual
         # Nếu đang ở manual, có thể bạn muốn dừng camera nếu nó đang chạy từ chế độ auto
         bh.stop_camera_stream_handler(label_cam) # Tùy chọn: dừng camera khi chuyển về manual
-
+        od.set_operation_mode(False)
     else:  # auto mode
         radio_auto.config(relief=tk.SUNKEN, bg="#f4f716")
         radio_manual.config(relief=tk.RAISED, bg="#f0f0f5")
@@ -50,6 +50,7 @@ def toggle_mode():
         radio_auto.config(state=tk.DISABLED)
         btn_namcham.config(bg="#eb3b3b")
         btn_bangtai.config(bg="#eb3b3b")
+        od.set_operation_mode(True)
         # Truyền hàm gửi serial, widget label camera, và đối tượng serial
         bh.run_auto_mode_sequence(send_command_to_serial, label_cam, ser)
 
@@ -66,7 +67,7 @@ def send_command_to_serial(command_str):
     if ser and ser.is_open:
         try:
             ser.write(command_str.encode())
-            print(f"Gửi: {command_str.strip()}")
+            # print(f"Gửi: {command_str.strip()}")
             return True
         except serial.SerialException as e:
             messagebox.showerror("Serial Error", f"Error writing to serial port: {e}")
@@ -101,8 +102,9 @@ def stop_robot():
         btn_start_cam.config(state=tk.DISABLED)
         btn_stop_cam.config(state=tk.DISABLED)
         bh.stop_camera_stream_handler(label_cam)
-        btn_namcham.config(bg="#eb3b3b")
-        btn_bangtai.config(bg="#eb3b3b")
+        btn_namcham.config(text="ON MAG",bg="#eb3b3b")
+        btn_bangtai.config(text="ON CONV",bg="#eb3b3b")
+        od.reset_object_memory()
         # Chuyển chế độ về manual
         mode_var.set("manual")
         toggle_mode()
@@ -132,7 +134,7 @@ def read_serial():
                 # rstrip: xóa khoảng trắng || ser.readline(): đọc dữ liệu từ cổng COM
                 # python nhận dữ liệu từ serial nên phải giải mã từ bytes sang chuỗi, dùng utf-8 là chuẩn mã hóa kí tự
                 if line:
-                    print(f"Nhận: {line}")
+                    # print(f"Nhận: {line}")
                     window.after(0, lambda l=line: (
                         text_box.insert(tk.END, l + "\n"), # \n là xuống dòng
                         text_box.see(tk.END) # cuộn text box xuống để thấy dòng dữ liệu newest
@@ -163,25 +165,101 @@ def toggle_conveyor_wrapper():
     if new_state is not None:
         conveyor_state = new_state
 
+def update_count_display():
+    memory = od.get_object_memory()
+    mapping = {
+        'red_star': ('star', 'red'),
+        'green_star': ('star', 'grn'),
+        'yellow_star': ('star', 'yel'),
+        'red_triangle': ('tri', 'red'),
+        'green_triangle': ('tri', 'grn'),
+        'yellow_triangle': ('tri', 'yel'),
+        'red_square': ('sqr', 'red'),
+        'green_square': ('sqr', 'grn'),
+        'yellow_square': ('sqr', 'yel'),
+    }
+
+    for mem_key, (row_key, col_key) in mapping.items():
+        label = count_labels.get((row_key, col_key))
+        if label:
+            label.config(text=str(memory[mem_key]['count']))
+    for color in ['red', 'grn', 'yel']:
+        total = 0
+        for shape in ['star', 'tri', 'sqr']:
+            label = count_labels.get((shape, color))
+            if label:
+                try:
+                    total += int(label.cget("text"))
+                except ValueError:
+                    pass
+        if sum_labels.get(color):
+            sum_labels[color].config(text=str(total))
+    # Lên lịch gọi lại sau 500ms
+    window.after(500, update_count_display)
+
+
 # --- GUI LAYOUT DEFINITION ---
 frame_main_content = tk.Frame(window, bg="#f0f0f5")
 frame_main_content.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 # Section 1: Header Image
-label_image = tk.Label(window, bg="#f0f0f5")
+# label_image = tk.Label(window, bg="#f0f0f5")
+# try:
+#     image_path = "Banner0.png"
+#     try:
+#         image = Image.open(image_path)
+#     except FileNotFoundError:
+#         print(f"Warning: Image file '{image_path}' not found. Using placeholder.")
+#         image = Image.new('RGB', (850, 100), color='skyblue')  # Simpler placeholder
+#     image = image.resize((1000, 100))
+#     photo = ImageTk.PhotoImage(image)
+#     label_image.config(image=photo)
+#     label_image.image = photo
+# except Exception as e:
+#     print(f"Lỗi khi tải ảnh banner: {e}")
+#     # label_image might remain empty or you can set a text placeholder
+# Section 1: Header with two images and center text
+frame_banner = tk.Frame(window, bg="#f0f0f5", height=100)
+frame_banner.pack(fill=tk.X, padx=10, pady=(10, 0))
+
+# Left image
+left_image_label = tk.Label(frame_banner, bg="#f0f0f5")
 try:
-    image_path = "Banner0.png"
-    try:
-        image = Image.open(image_path)
-    except FileNotFoundError:
-        print(f"Warning: Image file '{image_path}' not found. Using placeholder.")
-        image = Image.new('RGB', (850, 100), color='skyblue')  # Simpler placeholder
-    image = image.resize((850, 100))
-    photo = ImageTk.PhotoImage(image)
-    label_image.config(image=photo)
-    label_image.image = photo
-except Exception as e:
-    print(f"Lỗi khi tải ảnh banner: {e}")
-    # label_image might remain empty or you can set a text placeholder
+    left_image_path = "university.png"
+    left_image = Image.open(left_image_path).resize((130, 130))
+except FileNotFoundError:
+    left_image = Image.new('RGB', (100, 100), color='lightblue')
+left_photo = ImageTk.PhotoImage(left_image)
+left_image_label.config(image=left_photo)
+left_image_label.image = left_photo
+left_image_label.pack(side=tk.LEFT, padx=(0, 10))
+
+# Center title
+title_frame = tk.Frame(frame_banner, bg="#f0f0f5")
+title_frame.pack(side=tk.LEFT, expand=True)
+
+# First line: Main title
+banner_title = tk.Label(title_frame, text="TRƯỜNG ĐẠI HỌC SƯ PHẠM KỸ THUẬT THÀNH PHỐ HỒ CHÍ MINH", font=font_title, bg="#f0f0f5", fg="#333")
+banner_title.pack()
+
+# Second line: Subtitle
+banner_subtitle = tk.Label(title_frame, text="KHOA ĐIỆN - ĐIỆN TỬ", font=font_title, bg="#f0f0f5", fg="#333")
+banner_subtitle.pack()
+
+# Third line: GUI title (with spacing)
+banner_gui_title = tk.Label(title_frame, text="DELTA ROBOT", font=("Arial", 22, "bold"), bg="#f0f0f5", fg="#0055aa")
+banner_gui_title.pack(pady=(20, 0))  # cách dòng trên 20 pixel
+# Right image
+right_image_label = tk.Label(frame_banner, bg="#f0f0f5")
+try:
+    right_image_path = "faculty.jpg"
+    right_image = Image.open(right_image_path).resize((130, 130))
+except FileNotFoundError:
+    right_image = Image.new('RGB', (100, 100), color='lightgreen')
+right_photo = ImageTk.PhotoImage(right_image)
+right_image_label.config(image=right_photo)
+right_image_label.image = right_photo
+right_image_label.pack(side=tk.RIGHT, padx=(10, 0))
+
 
 # Section 2: Title
 title = tk.Label(window, text="ROBOT DELTA", font=font_title, bg="#f0f0f5", fg="#333")
@@ -194,9 +272,12 @@ radio_manual = tk.Radiobutton(frame_mode_selection, text="MANUAL", variable=mode
                               font=font_button, relief=tk.RAISED, bd=2) #bd: độ dày đường viền
 # variable: Khi một radio button được chọn, giá trị của biến này sẽ được cập nhật thành value của nút đó
 # value: Giá trị mà variable sẽ nhận khi radio button này được chọn. Ví dụ, khi radio_manual được chọn, mode_var sẽ có giá trị là "manual".
+# indicatron = 0: loại bỏ vòng tròn mặc định của nút do hàm radiobutton tạo ra
+# relief: đặt đường viền nút là "nổi", tạo hiệu ứng 3D
 radio_auto = tk.Radiobutton(frame_mode_selection, text="AUTO", variable=mode_var, value="auto",
                             command=toggle_mode, activebackground="#ffe0b0", indicatoron=0, width=10, font=font_button,
                             relief=tk.RAISED, bd=2)
+# side: ch định phía mà widget được gói vào
 radio_manual.pack(side=tk.LEFT, padx=(0, 5))
 radio_auto.pack(side=tk.LEFT, padx=5)
 frame_mode_selection.pack(side=tk.LEFT) # Sẽ pack vào frame_mode_selection_container sau
@@ -208,7 +289,10 @@ bottom_bar_frame.pack(side=tk.BOTTOM, fill=tk.X, pady=5)
 # ========== TEXT LOG ==========
 frame_text_bottom_right = tk.Frame(bottom_bar_frame, bg="#f0f0f5")
 frame_text_bottom_right.grid(row=0, column=1, sticky="nsew", padx=(0, 10))  # Right side
-
+# row: chỉ định số hàng widget đc đặt
+# rowspan: widget chiếm bao nhiêu hàng
+# sticky: chỉnh cách widget dính vào bên nào của 1 ô lưới
+# hoặc mở rộng theo hướng chỉ định để lấp đầy không gian trong ô lưới đó
 text_box = tk.Text(frame_text_bottom_right, font=("Courier New", 11), width=60, height=5)
 scrollbar = tk.Scrollbar(frame_text_bottom_right, command=text_box.yview)
 text_box.config(yscrollcommand=scrollbar.set)
@@ -239,10 +323,10 @@ col2.grid(row=0, column=1, padx=(0, 5))
 btn_home = tk.Button(col2, text="SET HOME", command=handle_set_home,
                      font=font_button, bg="#edaa1a", fg="white", width=8)
 btn_home.pack(pady=2, fill=tk.X)
-btn_namcham = tk.Button(col2, text="OFF MAG", command=toggle_namcham_wrapper,
+btn_namcham = tk.Button(col2, text="ON MAG", command=toggle_namcham_wrapper,
                         font=font_button, bg="#eb3b3b", fg="white", width=8)
 btn_namcham.pack(pady=2, fill=tk.X)
-btn_bangtai = tk.Button(col2, text="OFF CONV", command=toggle_conveyor_wrapper,
+btn_bangtai = tk.Button(col2, text="ON CONV", command=toggle_conveyor_wrapper,
                         font=font_button, bg="#eb3b3b", fg="white", width=8)
 btn_bangtai.pack(pady=2, fill=tk.X)
 
@@ -283,39 +367,45 @@ frame_pos_group = tk.LabelFrame(frame_inputs, text="POSITION (mm)", font=("Helve
                                 bg="#f0f0f5", fg="#333", bd=2, relief=tk.GROOVE)
 frame_pos_group.grid(row=1, column=0, columnspan=3, padx=10, pady=(5, 5), sticky="nsew")
 
-#################################
-# COUNT DISPLAY
-frame_count_group = tk.LabelFrame(frame_inputs, text="COUNT", font=("Helvetica", 17, "bold"),
+# Count Display
+frame_count_group = tk.LabelFrame(frame_inputs, text="PRODUCTS", font=("Helvetica", 17, "bold"),
                                   bg="#f0f0f5", fg="#333", bd=2, relief=tk.GROOVE)
 frame_count_group.grid(row=0, column=3, rowspan=2, columnspan=3, padx=(10, 10), pady=(10, 5), sticky="nsew")
 
-# Cấu hình giãn cột cho đẹp hơn
-frame_count_group.grid_columnconfigure(0, weight=1)
-frame_count_group.grid_columnconfigure(1, weight=1)
+# Tên cột
+col_names = ["RED", "GRN", "YEL"] # chữ GRN ở đây phải giống trong hàm update_count_display
+for j, name in enumerate(col_names):
+    tk.Label(frame_count_group, text=name, font=font_label, bg="#f0f0f5").grid(row=0, column=j+1, padx=5, pady=5)
 
-# R
-label_r_count_text = tk.Label(frame_count_group, text="RED", font=font_label, bg="#f0f0f5", anchor="center")
-label_r_count_text.grid(row=0, column=0, padx=15, pady=10, sticky="ew")
-label_r_count = tk.Label(frame_count_group, text="0", font=font_label,
-                         relief="sunken", bg="white", anchor="center")
-label_r_count.grid(row=0, column=1, padx=15, pady=10, sticky="ew")
+# Tạo tiêu đề hàng (star, tri, sqr) và các ô đếm
+row_names = ["STAR", "TRI", "SQR"]
+count_labels = {}  # Dictionary lưu các nhãn để cập nhật
 
-# G
-label_g_count_text = tk.Label(frame_count_group, text="GREEN", font=font_label, bg="#f0f0f5", anchor="center")
-label_g_count_text.grid(row=1, column=0, padx=15, pady=10, sticky="ew")
-label_g_count = tk.Label(frame_count_group, text="0", font=font_label,
-                         relief="sunken", bg="white", anchor="center")
-label_g_count.grid(row=1, column=1, padx=15, pady=10, sticky="ew")
+for i, shape in enumerate(row_names):
+    # Tên hàng
+    tk.Label(frame_count_group, text=shape, font=font_label, bg="#f0f0f5").grid(row=i + 1, column=0, padx=5, pady=5)
 
-# Y
-label_y_count_text = tk.Label(frame_count_group, text="YELLOW", font=font_label, bg="#f0f0f5", anchor="center")
-label_y_count_text.grid(row=2, column=0, padx=15, pady=10, sticky="ew")
-label_y_count = tk.Label(frame_count_group, text="0", font=font_label,
-                         relief="sunken", bg="white", anchor="center")
-label_y_count.grid(row=2, column=1, padx=15, pady=10, sticky="ew")
+    for j, color in enumerate(col_names):
+        lbl = tk.Label(frame_count_group, text="0", font=font_label,
+                       relief="sunken", bg="white", width=6, anchor="center")
+        lbl.grid(row=i + 1, column=j + 1, padx=5, pady=5, sticky="nsew")
+        count_labels[(shape.lower(), color.lower())] = lbl
+tk.Label(frame_count_group, text="SUM", font=font_label, bg="#f0f0f5").grid(row=4, column=0, padx=5, pady=5)
 
+sum_labels = {}  # Dictionary lưu các nhãn tổng
 
-#####################################
+for j, color in enumerate(col_names):
+    lbl = tk.Label(frame_count_group, text="0", font=font_label,
+                   relief="sunken", bg="#e0e0e0", width=6, anchor="center")
+    lbl.grid(row=4, column=j + 1, padx=5, pady=5, sticky="nsew")
+    sum_labels[color.lower()] = lbl
+update_count_display()
+
+# Position Display
+frame_pos_group = tk.LabelFrame(frame_inputs, text="POSITION (mm)", font=("Helvetica", 17, "bold"),
+                                bg="#f0f0f5", fg="#333", bd=2, relief=tk.GROOVE)
+frame_pos_group.grid(row=1, column=0, columnspan=3, padx=10, pady=(5, 5), sticky="nsew")
+
 frame_xyz = tk.Frame(frame_pos_group, bg="#f0f0f5")
 frame_xyz.pack(padx=10, pady=5, anchor="w")
 
@@ -334,7 +424,6 @@ label_z.pack(side=tk.LEFT, padx=(0, 2))
 entry_z = tk.Entry(frame_xyz, font=font_entry, width=8, state='readonly')
 entry_z.pack(side=tk.LEFT, padx=(0, 10))
 
-# Inverse Kinematics
 # INVERSE KINEMATIC SECTION
 frame_ik_group = tk.LabelFrame(frame_inputs, text="INVERSE KINEMATIC",
                                font=("Helvetica", 17, "bold"), bg="#f0f0f5", fg="#333", bd=2, relief=tk.GROOVE)
@@ -442,8 +531,10 @@ btn_stop_cam.pack(side=tk.LEFT, padx=5)
 
 # --- PACKING THE MAIN LAYOUT SECTIONS INTO THE WINDOW ---
 # Order is important: top fixed, bottom fixed, then central expanding
-label_image.pack(side=tk.TOP, fill=tk.X, pady=(10, 5))
-title.pack(side=tk.TOP, pady=(5,10)) # Giảm pady trên của title
+######################
+# label_image.pack(side=tk.TOP, fill=tk.X, pady=(10, 5))
+# title.pack(side=tk.TOP, pady=(5,10)) # Giảm pady trên của title
+######################
 
 # Giảm pady cho frame_mode_selection_container
 frame_mode_selection_container.pack(side=tk.TOP, fill=tk.X, padx=20, pady=(0, 5))
