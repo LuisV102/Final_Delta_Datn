@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 import time
 import uuid  # Thêm thư viện để tạo ID duy nhất
+import serial
+
+from queue import Queue
+import threading
 
 # Thêm biến toàn cục để theo dõi vật thể đã được đếm
 _counted_objects = set()
@@ -43,14 +47,25 @@ _object_color_detected = None
 _last_command_time = 0
 _command_sent = False  # ĐÃ GỬI LỆNH ĐIỀU KHIỂN CHƯA
 _predicted_time_to_top = 0
+
+_predicted_time_robot_reach = 0.0  # Đảm bảo là float
 _calibration_data_list = []
 _command_cooldown_duration = 3.0  # Thời gian cooldown sau khi gửi lệnh (giây)
 _current_object_id = None
 _current_shape_detected = None
+_is_auto_mode = False  # Khởi tạo chế độ (có thể thiết lập lại từ GUI)
 
 # Ngưỡng diện tích tối thiểu cho contour được coi là hợp lệ
 MIN_CONTOUR_AREA = 150
 
+# Thêm biến toàn cục để theo dõi vật thể đã được đếm
+_counted_objects = set()
+
+# CÁC BIẾN MỚI CHO LOGIC VẬN TỐC
+_initial_max_velocity_found = False
+_velocity_samples = []
+_AVERAGE_VELOCITY_SAMPLE_THRESHOLD = 5  # Số lượng mẫu vận tốc tối thiểu để bắt đầu tính trung bình
+_VELOCITY_STABILIZATION_ZONE = 0.8  # Tỷ lệ quãng đường để xác định vận tốc ban đầu ổn định (80% quãng đường từ Y_BOTTOM đến Y_TRIGGER)
 # LƯU BIẾN Ở DẠNG DICTIONARY (đây là dạng mảng liên kết, key - value)
 _objects_memory = {
     'red_star': {'count': 0},
@@ -63,6 +78,53 @@ _objects_memory = {
     'green_triangle': {'count': 0},
     'yellow_triangle': {'count': 0}
 }
+#########################
+class SerialManager:
+    def __init__(self, port, baudrate):
+        self.serial_port = serial.Serial(port, baudrate, timeout=1)
+        self.command_queue = Queue()
+        self.response_queue = Queue()
+        self.running = False
+        self.lock = threading.Lock()
+
+    def start(self):
+        self.running = True
+        self.read_thread = threading.Thread(target=self._read_serial, daemon=True)
+        # luôn lắng nghe dữ liệu từ Arduino. Khi có dữ liệu, nó sẽ đọc
+        self.read_thread.start()
+        self.write_thread = threading.Thread(target=self._write_serial, daemon=True)
+        self.write_thread.start()
+
+    def stop(self):
+        self.running = False
+        self.read_thread.join()
+        self.write_thread.join()
+        self.serial_port.close()
+
+    def _read_serial(self):
+        while self.running:
+            if self.serial_port.in_waiting:
+                with self.lock:
+                    data = self.serial_port.readline().decode().strip()
+                    self.response_queue.put(data)
+            time.sleep(0.01)
+
+    def _write_serial(self):
+        while self.running:
+            if not self.command_queue.empty():
+                command = self.command_queue.get()
+                with self.lock:
+                    self.serial_port.write(command.encode())
+            time.sleep(0.01)
+
+    def send_command(self, command):
+        self.command_queue.put(command)
+
+    def get_response(self):
+        if not self.response_queue.empty():
+            return self.response_queue.get()
+        return None
+###########################
 def set_operation_mode(is_auto):
     """
     Thiết lập chế độ hoạt động của hệ thống.
@@ -80,31 +142,39 @@ def get_object_memory():
     return _objects_memory.copy()
 def reset_object_memory():
     """Reset tất cả bộ nhớ ĐẾM vật thể"""
-    global _objects_memory
+    global _objects_memory, _counted_objects
     for key in _objects_memory.keys():
         _objects_memory[key] = {'count': 0}
+    _counted_objects.clear()  # Đảm bảo reset cả set các ID đã đếm
 
 def reset_detection_state():
     """Reset all state variables for object detection."""
     global _tracking_active, _start_time, _start_y, _max_velocity
     global _current_object_info, _object_color_detected, _last_command_time
     global _command_sent, _predicted_time_to_top, _calibration_data_list
-    global _counted_objects_id
+    global _counted_objects_id, _current_shape_detected
+    global _initial_max_velocity_found, _velocity_samples
 
 
     _current_object_id = None
+    _current_shape_detected = None
     _tracking_active = False
     _start_time = 0
     _start_y = 0
-    _max_velocity = 0
+    _max_velocity = 0.0
     _current_object_info = None
     _object_color_detected = None
     _last_command_time = 0
     _command_sent = False
-    _predicted_time_to_top = 0
+    _predicted_time_to_top = 0.0
     _calibration_data_list = []
+    _predicted_time_robot_reach = 0.0
 
-def process_frame_for_detection(input_frame, ser_instance):
+    _initial_max_velocity_found = False
+    _velocity_samples = []  # Xóa các mẫu vận tốc
+
+# def process_frame_for_detection(input_frame, ser_instance):
+def process_frame_for_detection(input_frame, serial_manager):
     """
     Processes a single frame for object detection, drawing, and communication.
     Args:
@@ -120,6 +190,7 @@ def process_frame_for_detection(input_frame, ser_instance):
     global _current_object_id
     global _current_shape_detected
     _predicted_time_robot_reach = 0
+    global _initial_max_velocity_found, _velocity_samples
 
     if input_frame is None:
         return None
@@ -149,14 +220,7 @@ def process_frame_for_detection(input_frame, ser_instance):
     if roi.size == 0:
         print("Warning: ROI is empty.")
         return frame
-##########################
-    # Trước phần tìm contour, thêm các bước xử lý ảnh
-    # gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-    # blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-    # edges = cv2.Canny(blurred, 50, 150)
-    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    # dilated = cv2.dilate(edges, kernel, iterations=1)
-##################################
+
     hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
     # CHUYỂN ROI SANG HSV ĐỂ XỬ LÝ NHẬN DIỆN MÀU TỐT HƠN SO VỚI BGR
 
@@ -198,7 +262,6 @@ def process_frame_for_detection(input_frame, ser_instance):
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
         mask = cv2.medianBlur(mask, 5)
 
-        # contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Lọc các contour có diện tích nhỏ hơn ngưỡng và tìm contour lớn nhất cho màu hiện tại
@@ -218,11 +281,13 @@ def process_frame_for_detection(input_frame, ser_instance):
         color_name = best_color_name  # Gán lại color_name cho contour được chọn
 
         x, y, w, h = cv2.boundingRect(cnt)
+        # tọa độ x,y góc trên bên trái, chiều rộng cao w,h hcn
         text_x_base = ROI_X1 + x
         # --- Phần tính toán màu sắc trung bình và vẽ ---
         # VẼ BOUNDING BOX VÀ TẠO MASK CHO CONTOUR
         mask_cnt = np.zeros(roi.shape[:2], dtype=np.uint8)
         cv2.drawContours(mask_cnt, [cnt], -1, 255, thickness=cv2.FILLED)
+        # -1: Vẽ tất cả các đường viền trong contours
         mean_hsv_val = cv2.mean(hsv, mask=mask_cnt)
         # DÙNG HSV TRUNG BÌNH ĐỂ TÍNH LẠI MÀU SẮC
         hue_val = int(mean_hsv_val[0])
@@ -232,7 +297,9 @@ def process_frame_for_detection(input_frame, ser_instance):
         #     return frame  # Bỏ qua frame này nếu màu không đủ rõ
 
         bgr_color_obj = cv2.cvtColor(np.uint8([[[hue_val, sat_val, brightness_val]]]), cv2.COLOR_HSV2BGR)[0][0]
+        # bgr_color_obj sẽ chứa một mảng NumPy 1D với 3 giá trị BGR của màu đã được chuyển đổi (ví dụ: [B, G, R])
         bgr_color_tuple = tuple(int(c) for c in bgr_color_obj)
+        # tuple dùng để lưu trữ các giá trị hằng số
 
         cv2.rectangle(frame, (ROI_X1 + x, ROI_Y1 + y), (ROI_X1 + x + w, ROI_Y1 + y + h), bgr_color_tuple, 2)
 
@@ -276,8 +343,8 @@ def process_frame_for_detection(input_frame, ser_instance):
             real_y_top_trig = (Y_TRIGGER - Y_TOP) * Z_CONST / fy
             P_CA = np.array([[real_x], [real_y], [Z_CONST], [1]])
             T_0C = np.array([
-                [0, -1, 0, -160],
-                [-1, 0, 0, -27],
+                [0, -1, 0, -170],
+                [-1, 0, 0, -30],
                 [0, 0, -1, -132],
                 [0, 0, 0, 1]
             ]) # MA TRẬN CHUYỂN ĐỔI CAMERA QUA ROBOT
@@ -287,6 +354,7 @@ def process_frame_for_detection(input_frame, ser_instance):
 
             if len(_calibration_data_list) < 20:
                 _calibration_data_list.append(calib_x)
+                # append: thêm calib_x vào cuối list _calibration_data_list
 
             # --- Xử lý logic tracking và tính toán vận tốc ---
             current_y_on_frame = cy_roi + ROI_Y1
@@ -294,12 +362,14 @@ def process_frame_for_detection(input_frame, ser_instance):
             # NHẬN DIỆN HÌNH DẠNG TRƯỚC KHI XỬ LÝ TRIGGER LINE
             epsilon = 0.02 * cv2.arcLength(cnt, True)
             approx = cv2.approxPolyDP(cnt, epsilon, True)
+            # approx là mảng chưa các điểm đỉnh của contour
             # Đây là thuật toán xấp xỉ đường đa giác Douglas-Peucker.
-            # Nó làm giảm số lượng đỉnh của một đường cong hoặc đa giác trong khi vẫn giữ được hình dạng tổng thể
+            # Nó làm giảm số lượng đỉnh của một đường cong hoặc đa giác
+            # trong khi vẫn giữ được hình dạng tổng thể
             # shape = "Unknown"
 
             vertices = len(approx) # số đỉnh của đa giác
-            hull = cv2.convexHull(cnt)
+            hull = cv2.convexHull(cnt) # tìm đường bao lồi
             area = cv2.contourArea(cnt)
             hull_area = cv2.contourArea(hull)
             solidity = float(area) / hull_area if hull_area > 0 else 0
@@ -312,11 +382,11 @@ def process_frame_for_detection(input_frame, ser_instance):
             side_ratio = 0 # hình vuông = 1, hcn < 1
             if vertices == 4:
                 sides = []
-                for i in range(4):
-                    pt1 = approx[i][0]
+                for i in range(4): # vòng lặp chạy qua 4 cạnh của tứ giác
+                    pt1 = approx[i][0] # lấy điểm đỉnh đầu tiên của cạnh hiện tại
                     pt2 = approx[(i + 1) % 4][0]
                     length = np.linalg.norm(pt1 - pt2)
-                    sides.append(length)
+                    sides.append(length) # append: thêm phần tử vào cuối chuỗi
                 max_len = max(sides)
                 min_len = min(sides)
                 side_ratio = min_len / max_len if max_len != 0 else 0
@@ -325,7 +395,7 @@ def process_frame_for_detection(input_frame, ser_instance):
             # DEBUG: In thông số để kiểm tra
             # print(
             #     f"Vertices: {vertices}, Solidity: {solidity:.2f}, Aspect Ratio: {aspect_ratio:.2f}, Side Ratio: {side_ratio:.2f}, Area: {area:.1f}")
-            # # ------------------------------
+            # ------------------------------
 
             # đơn vị area là pixel vuông
             # ƯU TIÊN HÌNH CÓ 4 CẠNH TRƯỚC
@@ -343,7 +413,7 @@ def process_frame_for_detection(input_frame, ser_instance):
                 shape = "Triangle"
             else:
                 shape = "Unknown"
-
+            _current_shape_detected = shape
             # Hiển thị thông tin hình dạng và màu sắc
             cv2.putText(frame, f"{color_name} {shape}", (text_x_base, ROI_Y1 + y - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, bgr_color_tuple, 2)
@@ -359,97 +429,117 @@ def process_frame_for_detection(input_frame, ser_instance):
                 #     _object_color_detected = 'Y'
                 # else:
                 #     _object_color_detected = color_name[0].upper()
-                _current_object_id = str(uuid.uuid4())
+                _current_object_id = str(uuid.uuid4()) # gán id để nhận riêng vật này
+                print(
+                    f"DEBUG: Bắt đầu tracking vật thể {color_name} {shape} tại Y_BOTTOM={Y_BOTTOM}, thời gian: {_start_time}")
 
-            # Tính toán vận tốc khi vật đang di chuyển
+            # Tính toán vận tốc khi vật đang di chuyển và thời gian robot đến gắp vật
             if _tracking_active and not _command_sent:
                 current_time = time.time()
                 elapsed_time = current_time - _start_time
 
                 if elapsed_time > 0:
-                    distance_pixels = abs(current_y_on_frame - _start_y)
+                    distance_pixels = abs(current_y_on_frame - _start_y) # k/c theo trục y
                     distance_mm = distance_pixels * Z_CONST / fy
                     current_velocity = distance_mm / elapsed_time
                     # TÍNH VẬN TỐC HIỆN TẠI DỰA TRÊN QUÃNG ĐƯỜNG ĐI TỪ Y_BOTTOM
+                    ######################
+                    # print(f"DEBUG: current_y_on_frame: {current_y_on_frame}, current_velocity: {current_velocity:.2f} mm/s") # Bỏ comment để debug
 
-                    if current_velocity > _max_velocity:
-                        _max_velocity = current_velocity
-                        distance_to_top_mm = (Y_TRIGGER - Y_TOP) * Z_CONST / fy
-                        _predicted_time_to_top = distance_to_top_mm / _max_velocity if _max_velocity > 0 else 0
-                        _predicted_time_robot_reach = _predicted_time_to_top - 0.4
+                    # GIAI ĐOẠN 1: Xác định vận tốc tối đa ban đầu để loại bỏ vận tốc nhỏ
+                    if not _initial_max_velocity_found:
+                        if current_velocity > _max_velocity:
+                            _max_velocity = current_velocity
+                        # Xác định khi nào đã tìm thấy vận tốc tối đa ban đầu
+                        # Vật đã đi được một phần quãng đường từ Y_BOTTOM và _max_velocity đã khác 0
+                        stabilization_point_y = Y_BOTTOM - (Y_BOTTOM - Y_TRIGGER) * (1 - _VELOCITY_STABILIZATION_ZONE)
+                        if current_y_on_frame <= stabilization_point_y and _max_velocity > 0:
+                            _initial_max_velocity_found = True
+                            print(
+                                f"DEBUG: Đã xác định vận tốc tối đa ban đầu: {_max_velocity:.2f} mm/s tại Y={current_y_on_frame}")
+                            # Reset danh sách mẫu vận tốc để chỉ thu thập sau khi vận tốc ban đầu ổn định
+                            _velocity_samples = []
 
-            # XỬ LÝ TRIGGER LINE
-            calib_x_top = calib_x_top + 25
-            if _tracking_active and current_y_on_frame <= Y_TRIGGER and not _command_sent:
-                object_key = f"{color_name}_{shape.lower()}"
+                    # GIAI ĐOẠN 2: Tính toán vận tốc trung bình sau khi vận tốc ban đầu đã ổn định
+                    if _initial_max_velocity_found:
+                        _velocity_samples.append(current_velocity)
+                        # Giới hạn số lượng mẫu để tránh bộ nhớ tăng quá lớn và đảm bảo tính tức thời
+                        if len(_velocity_samples) > 20:  # Giới hạn 20 mẫu gần nhất
+                            _velocity_samples.pop(0)
 
-                # Kiểm tra vật thể chưa được đếm
-                if _current_object_id is not None and object_key in _objects_memory:
-                    # Tạo key duy nhất cho vật thể này
-                    object_unique_key = f"{object_key}_{_current_object_id}"
+                        # Tính vận tốc trung bình từ các mẫu
+                        if len(_velocity_samples) >= _AVERAGE_VELOCITY_SAMPLE_THRESHOLD:
+                            average_velocity = sum(_velocity_samples) / len(_velocity_samples)
+                            # Sử dụng vận tốc trung bình này để dự đoán
+                            # Đảm bảo vận tốc trung bình không quá nhỏ để tránh chia cho 0
+                            effective_velocity = max(average_velocity, 0.1)  # Đặt một ngưỡng tối thiểu 0.1 mm/s
 
-                    if object_unique_key not in _counted_objects:
-                        _objects_memory[object_key]['count'] += 1
-                        _counted_objects.add(object_unique_key)
-                        print(f"Đã phát hiện: {object_key}, Tổng số: {_objects_memory[object_key]['count']}")
+                            distance_to_top_mm = (Y_TRIGGER - Y_TOP) * Z_CONST / fy
+                            _predicted_time_to_top = distance_to_top_mm / effective_velocity
+                            _predicted_time_robot_reach = _predicted_time_to_top - 0.4  # Điều chỉnh thêm 0.4s
+                            # print(f"DEBUG: Avg vel: {average_velocity:.2f}, Pred time to top: {_predicted_time_to_top:.2f}, Pred robot reach: {_predicted_time_robot_reach:.2f}") # Bỏ comment để debug
 
-                # Gửi lệnh đến Arduino CHỈ KHI Ở CHẾ ĐỘ AUTO
-                if _is_auto_mode: # <<< THÊM ĐIỀU KIỆN KIỂM TRA CHẾ ĐỘ AUTO
-                    if _max_velocity > 0 and ser_instance and ser_instance.is_open and _object_color_detected:
-                        if _predicted_time_robot_reach == 0:
-                            _predicted_time_robot_reach = 0.5 # Hoặc một giá trị default hợp lý khác
-                        command = f"Next:{calib_x_top:.1f},{calib_y:.1f},{calib_z:.1f};T:{_predicted_time_robot_reach:.2f};C:{_object_color_detected}\n"
-                        try:
-                            ser_instance.write(command.encode())
-                            print(f"Sent to Arduino (AUTO): {command.strip()}")
-                            _command_sent = True
-                            reset_detection_state()
-                            _last_command_time = time.time()
-                            # reset_detection_state() # Xem xét lại vị trí của reset_detection_state()
-                                                      # Nó đã được gọi ở đầu hàm nếu cooldown đã qua.
-                                                      # Nếu bạn muốn reset ngay sau khi gửi, giữ nó ở đây.
-                                                      # Hoặc bạn có thể để logic cooldown ở đầu hàm xử lý việc reset.
-                        except Exception as e:
-                            print(f"Error sending to Arduino (AUTO): {e}")
-                    # else: # Có thể thêm log nếu các điều kiện khác không thỏa mãn khi ở AUTO
-                    #     if not (_max_velocity > 0): print("AUTO Mode: Velocity not positive.")
-                    #     if not (ser_instance and ser_instance.is_open): print("AUTO Mode: Serial not available.")
-                    #     if not _object_color_detected: print("AUTO Mode: No object color detected.")
-                else:
-                    # Ở chế độ MANUAL, không gửi lệnh, nhưng có thể log thông tin
-                    if _object_color_detected: # Chỉ log nếu có vật thể để tránh spam
-                        print(f"MANUAL Mode: Object {_object_color_detected} at trigger. Data not sent. Coords: ({calib_x_top:.1f}, {calib_y:.1f})")
+                    # XỬ LÝ TRIGGER LINE
+                    # Cần đảm bảo calib_x_top được tính toán chính xác dựa trên tọa độ thực của vật thể
+                    # Việc cộng 25 trực tiếp vào calib_x_top ở đây có thể cần xem xét lại tùy theo mục đích
+                    # của calib_x_top (tọa độ đích của robot hay chỉ là offset).
+                    # Nếu nó là tọa độ đích, nên tính toán dựa trên các phép biến đổi không gian.
+                    # Nếu chỉ là offset, thì không cần thay đổi ở đây.
+                    calib_x_top = calib_x_top + 10
 
-                # Các dòng này nên được thực thi dù có gửi lệnh hay không,
-                # để chuẩn bị cho vật thể tiếp theo hoặc reset trạng thái logic
-                _tracking_active = False # Kết thúc tracking cho vật thể này
-                _max_velocity = 0        # Reset vận tốc max cho vật thể tiếp theo
-                _current_object_id = None # Reset ID sau khi xử lý xong
+                if _tracking_active and current_y_on_frame <= Y_TRIGGER and not _command_sent:
+                    object_key = f"{color_name}_{shape.lower()}"
 
-                # Nếu _command_sent là True (tức là đã gửi lệnh ở AUTO mode),
-                # thì logic cooldown ở đầu hàm sẽ xử lý việc reset_detection_state() sau đó.
-                # Nếu ở MANUAL mode, _command_sent sẽ không bao giờ là True từ khối này,
-                # nên reset_detection_state() có thể cần được gọi ở đây nếu bạn muốn
-                # reset ngay lập tức sau khi một vật đi qua trigger line ở MANUAL mode.
-                # Tuy nhiên, với logic cooldown hiện tại, có thể không cần thiết.
-                if not _is_auto_mode:
-                    # Cân nhắc xem có cần reset_detection_state() ngay ở đây cho MANUAL mode không
-                    # Hoặc để nó tự nhiên reset khi không có vật thể nào được track nữa.
-                    # Hiện tại, logic reset_detection_state() ở đầu hàm dựa vào _command_sent
-                    # và cooldown, nên có thể không cần reset thêm ở đây.
-                    pass
+                    # Kiểm tra và đếm vật thể (logic này đã đúng)
+                    if _current_object_id is not None and object_key in _objects_memory:
+                        object_unique_key = f"{object_key}_{_current_object_id}"
+                        if object_unique_key not in _counted_objects:
+                            _objects_memory[object_key]['count'] += 1
+                            _counted_objects.add(object_unique_key)
+                            print(f"Đã phát hiện: {object_key}, Tổng số: {_objects_memory[object_key]['count']}")
 
-                _tracking_active = False
-                _max_velocity = 0
-                _current_object_id = None  # Reset ID sau khi xử lý xong
+                    # Gửi lệnh đến Arduino CHỈ KHI Ở CHẾ ĐỘ AUTO
+                    if _is_auto_mode:
+                        # ===================== SỬA LỖI Ở ĐÂY =====================
+                        # 1. Sử dụng biến 'serial_manager' thay vì 'ser_instance'.
+                        # 2. Truy cập 'serial_manager.serial_port.is_open' để kiểm tra.
+                        if serial_manager and serial_manager.serial_port.is_open and _object_color_detected and _predicted_time_robot_reach > -0.3:
+                            # if _predicted_time_robot_reach <= 0:
+                            #     print(
+                            #         "WARNING: _predicted_time_robot_reach không hợp lệ, gán lại giá trị mặc định 0.5s")
+                            #     _predicted_time_robot_reach = 0.5
 
-            # Hiển thị thông tin đếm lên frame
-            # memory_text_y = 20
-            # for obj_type, data in _objects_memory.items():
-            #     display_text = f"{obj_type}: {data['count']}"
-            #     cv2.putText(frame, display_text, (10, memory_text_y),
-            #                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-            #     memory_text_y += 20
+                            command = f"Next:{calib_x_top:.1f},{calib_y:.1f},{calib_z:.1f};T:{_predicted_time_robot_reach:.2f};C:{_object_color_detected}\n"
+
+                            try:
+                                # Logic gửi lệnh đã đúng vì bạn đang dùng serial_manager ở đây
+                                serial_manager.send_command(command)
+                                print(f"Sent to Arduino (AUTO): {command.strip()}")
+                                _command_sent = True
+                                _last_command_time = time.time()
+                            except Exception as e:
+                                print(f"Error sending to Arduino: {e}")
+                        # ===================== KẾT THÚC SỬA LỖI =====================
+                        else:
+                            # In ra lý do không gửi được lệnh để dễ gỡ lỗi
+                            if not (serial_manager and serial_manager.serial_port.is_open):
+                                print("MANUAL Mode or Serial Port not ready. Data not sent.")
+                            else:
+                                print(
+                                    f"MANUAL Mode: Did not send command for {_object_color_detected}. Predicted time was {_predicted_time_robot_reach:.2f}s")
+                    else:
+                        # Ở chế độ MANUAL, không gửi lệnh
+                        if _object_color_detected:
+                            print(f"MANUAL Mode: Object {_object_color_detected} at trigger. Data not sent.")
+
+                    # Reset trạng thái sau khi xử lý trigger line
+                    print(f"Vật thể {object_key} đã qua trigger, reset trạng thái cho vật thể tiếp theo.")
+                    _tracking_active = False
+                    _max_velocity = 0.0
+                    _current_object_id = None
+                    # Thêm reset cho các biến vận tốc để đảm bảo tính toán chính xác cho vật thể sau
+                    _velocity_samples = []
+                    _initial_max_velocity_found = False
 
             # --- Vẽ thông tin lên frame ---
             text_x_base = ROI_X1 + x
@@ -458,6 +548,10 @@ def process_frame_for_detection(input_frame, ser_instance):
             robot_coords_text = f"Robot: ({calib_x:.1f}, {calib_y:.1f}, {calib_z:.1f})"
             cv2.putText(frame, robot_coords_text, (text_x_base, text_y_base + 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
+            # Hiển thị thời gian dự đoán
+            predicted_time_text = f"Pred. Time: {_predicted_time_robot_reach:.2f}s"
+            cv2.putText(frame, predicted_time_text, (text_x_base, text_y_base + 80),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
 
 
     return frame
