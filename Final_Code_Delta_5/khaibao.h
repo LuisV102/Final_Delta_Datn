@@ -21,6 +21,8 @@
 #define READ_B_2 digitalRead(pinB_2)
 #define READ_A_3 digitalRead(pinA_3)
 #define READ_B_3 digitalRead(pinB_3)
+// Thêm dòng này vào đầu file Khaibao.h
+#define MAX_PULSES_PER_MOVE 400 // Ví dụ: 2000 xung cho chuyển động dài nhất
 
 String inString = "";
 
@@ -77,11 +79,18 @@ unsigned long now,previous,tf_end;
 
 unsigned long lastPrintTime = 0;
 
-unsigned long *delay_run_spd_traject_1 = nullptr;
-unsigned long *delay_run_spd_traject_2 = nullptr;
-unsigned long *delay_run_spd_traject_3 = nullptr;
+// unsigned long *delay_run_spd_traject_1 = nullptr;
+// unsigned long *delay_run_spd_traject_2 = nullptr;
+// unsigned long *delay_run_spd_traject_3 = nullptr;
+unsigned long delay_run_spd_traject_1[MAX_PULSES_PER_MOVE];
+unsigned long delay_run_spd_traject_2[MAX_PULSES_PER_MOVE];
+unsigned long delay_run_spd_traject_3[MAX_PULSES_PER_MOVE];
 
 bool trajectory_ready = false;
 unsigned long current_pulse_index_1 = 0;  // Theo dõi xung hiện tại của động cơ 1
 unsigned long current_pulse_index_2 = 0;  // Dành cho động cơ 2 (nếu cần)
 unsigned long current_pulse_index_3 = 0;  // Dành cho động cơ 3 (nếu cần)
+
+float angle1_now, angle2_now, angle3_now;
+float thoigian=0,currentTime=0,previousTime=0;
+const unsigned long printInterval = 10; // 10ms = 0.01s

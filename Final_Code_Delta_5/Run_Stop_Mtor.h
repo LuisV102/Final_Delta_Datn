@@ -29,6 +29,10 @@ void StopAllMotors() {
   nPulse_1 = 0;
   nPulse_2 = 0;
   nPulse_3 = 0;
+  current_pulse_index_1 = 0;
+  current_pulse_index_2 = 0;
+  current_pulse_index_3 = 0;
+  trajectory_ready = false;
 
     // Tắt tất cả thiết bị ngoại vi
   digitalWrite(namcham, LOW);
@@ -50,15 +54,42 @@ void Stop_toggle()
 void calculateTrajectory(unsigned long delay_max, unsigned long xung_max, unsigned long* delay_array) {
   if (xung_max == 0) return;
   
+  const int MIN_PULSES_FOR_CURVE = 15; 
+
+  if (xung_max < MIN_PULSES_FOR_CURVE) {
+    // Chạy với tốc độ không đổi
+    for (unsigned long i = 0; i < xung_max; i++) {
+      delay_array[i] = delay_max; // Gán cùng một giá trị delay cho tất cả các xung
+    }
+    return; // Kết thúc hàm tại đây
+  }
+
+  double mau_so = ((double)xung_max * xung_max) / 4.0 - (double)(3 * xung_max) / 2.0;
+  if (abs(mau_so) < 1e-6) { // Kiểm tra nếu mẫu số quá gần 0
+      // Trường hợp hiếm gặp, chạy tốc độ không đổi để phòng ngừa
+      for (unsigned long i = 0; i < xung_max; i++) {
+          delay_array[i] = delay_max;
+      }
+      return;
+  } 
   // Calculate coefficients for quadratic speed profile
-  float a = (delay_max / 2.0) / ((xung_max * xung_max) / 4.0 + 3 * xung_max / 2.0);
+  float a = (delay_max / 2.0) / ((xung_max * xung_max) / 4.0 - 3 * xung_max / 2.0);
   float b = -a * (xung_max + 1);
   float c = delay_max + a * xung_max;
   
   // Calculate delay for each pulse
+  // for (unsigned long xung_hien_tai = 0; xung_hien_tai < xung_max; xung_hien_tai++) {
+  //   float delay = a * pow(xung_hien_tai, 2) + b * xung_hien_tai + c;
+  //   delay_array[xung_hien_tai] = static_cast<unsigned long>(delay);
+  // }
   for (unsigned long xung_hien_tai = 0; xung_hien_tai < xung_max; xung_hien_tai++) {
-    float delay = a * pow(xung_hien_tai, 2) + b * xung_hien_tai + c;
-    delay_array[xung_hien_tai] = static_cast<unsigned long>(delay);
+    double delay_double = a * pow(xung_hien_tai, 2) + b * xung_hien_tai + c;
+    
+    // Đảm bảo delay không âm hoặc quá nhỏ
+    if (delay_double < 10.0) { // 10us là một giới hạn an toàn tối thiểu
+        delay_double = 10.0;
+    }
+    delay_array[xung_hien_tai] = static_cast<unsigned long>(delay_double);
   }
 }
 

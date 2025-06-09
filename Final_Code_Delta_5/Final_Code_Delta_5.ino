@@ -40,7 +40,7 @@ void setup() {
   pinMode(limit_2, INPUT_PULLUP);
   pinMode(limit_3, INPUT_PULLUP);
 
-  setupTrajectoryArrays(0,0,0);
+  // setupTrajectoryArrays(0,0,0);
 
   currentPosition[0] = 0;
   currentPosition[1] = 0;
@@ -54,20 +54,44 @@ void setup() {
 
 void loop() {
   // Xử lý lệnh từ Serial
-    // Khởi tạo vị trí hiện tại về home
-
+  // unsigned long currentTime = millis();
+  
+  // Kiểm tra nếu đã đủ 10ms kể từ lần in trước
+  // if (currentTime - lastPrintTime >= printInterval) {
+  //   // Tính thời gian hiện tại theo giây
+  //   float timeInSeconds = currentTime / 1000.0;
+    
+  //   // Đọc giá trị encoder
+  //   angle1_now = (float)encoderPosition_1 * 45.0 / 9900.0;
+  //   angle2_now = (float)encoderPosition_2 * 45 / 9900;
+  //   angle3_now = (float)encoderPosition_3 * 45 / 9900;
+  //   // In ra thời gian (giây) và giá trị góc
+  //   Serial.print(timeInSeconds, 2);  
+  //   Serial.print(" ");              
+  //   Serial.print(angle1_now, 4);    
+  //   Serial.print(" ");              
+  //   Serial.print(angle2_now, 4);    
+  //   Serial.print(" ");             
+  //   Serial.print(angle3_now, 4);    
+  //   Serial.println();
+    // P0:0,0,-307.38;Pf:0,0,-392.5;T:1               
+    // Cập nhật thời gian cho lần in tiếp theo
+    // lastPrintTime = currentTime;
+  // }
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
     input.trim();
     processInputCommand(input);
   }
-  if (millis() - lastPrintTime >= 2000) 
+
+  if (millis() - lastPrintTime >= 4000) 
   { 
     Serial.print("Encoder 1: "); Serial.print((float)encoderPosition_1 * 45 / 9900, 4);  Serial.print("  ");
     Serial.print("Encoder 2: "); Serial.print((float)encoderPosition_2 * 45 / 9900, 4);  Serial.print("  ");
     Serial.print("Encoder 3: "); Serial.println((float)encoderPosition_3 * 45 / 9900, 4); 
     lastPrintTime = millis();
   }
+
   // Chạy các động cơ
   RunMotor_1();
   RunMotor_2();
@@ -97,6 +121,10 @@ void processInputCommand(String input) {
     Serial.println("System in EMERGENCY STOP state. Send 'start' to reset");
     return;
   }
+  if (!manualControlEnabled) { // Nếu điều khiển thủ công chưa được bật, không xử lý các lệnh này
+    Serial.println("Please send 'start' to enable robot control.");
+    return;
+  }
   else if (input[0] == 'h') {
     SetHome();
   }
@@ -118,7 +146,7 @@ void processInputCommand(String input) {
   } 
   else if (input.startsWith("P0:") && input.indexOf("Pf:") > 0 && input.indexOf("T:") > 0) {
     processPositionCommand(input);
-    // P0:0,0,-307.38;Pf:0,0,-395;T:1 -> No Colour
+    // P0:0,0,-307.38;Pf:0,0,-392.5;T:1 -> No Colour
     // P0:0,0,-307.38;Pf:0,0,-395;T:1;C:R -> with Colour 
   }
   else if (input.startsWith("Next:")) {
@@ -245,7 +273,7 @@ String getValue(String data, char separator, int index) {
   int found = 0;
   int strIndex[] = {0, -1};
   int maxIndex = data.length() - 1;
-
+  
   for (int i = 0; i <= maxIndex && found <= index; i++) {
     if (data.charAt(i) == separator || i == maxIndex) {
       found++;
