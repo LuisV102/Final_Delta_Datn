@@ -125,7 +125,7 @@ void Trajectory_4point(float tf, float x0, float y0, float z0, float xf, float y
   // Kiểm tra 1 lần duy nhất ở đầu hàm
   if(emergencyStop) return;
 
-  const float high = -398.8;
+  const float high = -399.3;
   
   // Di chuyển tới phía trên vị trí vật
   if(!emergencyStop) Trajectory_2point(tf-t_up_down, x0, y0, z0, xf, yf, -365);
@@ -145,7 +145,7 @@ void Trajectory_4point(float tf, float x0, float y0, float z0, float xf, float y
   // Xác định vị trí thả theo màu
   float dropX, dropY;
   switch(colour) {
-    case 'R': dropX = 77.66; dropY = -113.09; break;
+    case 'R': dropX = 87.66; dropY = -113.09; break;
     case 'G': dropX = -22.54; dropY = -110.8; break;
     case 'Y': dropX = 34.26; dropY = 113.62; break;
     default: return;
@@ -169,7 +169,7 @@ void Trajectory_4point(float tf, float x0, float y0, float z0, float xf, float y
 }
 void nextCycle(float newXf, float newYf, float newZf, float tf, String newColour)
 {
-  float high = -398.8;
+  float high = -399.3;
   Trajectory_4point(tf, currentPosition[0], currentPosition[1], currentPosition[2], 
                    newXf, newYf, high, newColour.charAt(0));
 }
