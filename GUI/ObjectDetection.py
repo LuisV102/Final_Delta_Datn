@@ -47,6 +47,7 @@ _object_color_detected = None
 _last_command_time = 0
 _command_sent = False  # ĐÃ GỬI LỆNH ĐIỀU KHIỂN CHƯA
 _predicted_time_to_top = 0
+delay_to_communicate = 0.4
 
 _predicted_time_robot_reach = 0.0  # Đảm bảo là float
 _calibration_data_list = []
@@ -345,7 +346,7 @@ def process_frame_for_detection(input_frame, serial_manager):
             T_0C = np.array([
                 [0, -1, 0, -170],
                 [-1, 0, 0, -30],
-                [0, 0, -1, -132],
+                [0, 0, -1, -136.3],
                 [0, 0, 0, 1]
             ]) # MA TRẬN CHUYỂN ĐỔI CAMERA QUA ROBOT
             P_OA = T_0C @ P_CA
@@ -461,6 +462,8 @@ def process_frame_for_detection(input_frame, serial_manager):
                             _velocity_samples = []
 
                     # GIAI ĐOẠN 2: Tính toán vận tốc trung bình sau khi vận tốc ban đầu đã ổn định
+                    max_spd = 0
+                    distance_after_delay = 0
                     if _initial_max_velocity_found:
                         _velocity_samples.append(current_velocity)
                         # Giới hạn số lượng mẫu để tránh bộ nhớ tăng quá lớn và đảm bảo tính tức thời
@@ -472,20 +475,16 @@ def process_frame_for_detection(input_frame, serial_manager):
                             average_velocity = sum(_velocity_samples) / len(_velocity_samples)
                             # Sử dụng vận tốc trung bình này để dự đoán
                             # Đảm bảo vận tốc trung bình không quá nhỏ để tránh chia cho 0
-                            effective_velocity = max(average_velocity, 0.1)  # Đặt một ngưỡng tối thiểu 0.1 mm/s
 
+                            effective_velocity = max(average_velocity, 0.1)  # Đặt một ngưỡng tối thiểu 0.1 mm/s
+                            max_spd = effective_velocity
                             distance_to_top_mm = (Y_TRIGGER - Y_TOP) * Z_CONST / fy
                             _predicted_time_to_top = distance_to_top_mm / effective_velocity
-                            _predicted_time_robot_reach = _predicted_time_to_top - 0.4  # Điều chỉnh thêm 0.4s
+                            _predicted_time_robot_reach = _predicted_time_to_top - delay_to_communicate  # Điều chỉnh thêm 0.4s
                             # print(f"DEBUG: Avg vel: {average_velocity:.2f}, Pred time to top: {_predicted_time_to_top:.2f}, Pred robot reach: {_predicted_time_robot_reach:.2f}") # Bỏ comment để debug
-
-                    # XỬ LÝ TRIGGER LINE
-                    # Cần đảm bảo calib_x_top được tính toán chính xác dựa trên tọa độ thực của vật thể
-                    # Việc cộng 25 trực tiếp vào calib_x_top ở đây có thể cần xem xét lại tùy theo mục đích
-                    # của calib_x_top (tọa độ đích của robot hay chỉ là offset).
-                    # Nếu nó là tọa độ đích, nên tính toán dựa trên các phép biến đổi không gian.
-                    # Nếu chỉ là offset, thì không cần thay đổi ở đây.
-                    calib_x_top = calib_x_top + 10
+                    ## Quãng đường mà vật đi thêm được trong 0.4s trễ đó
+                    distance_after_delay = max_spd * delay_to_communicate
+                    calib_x_top = calib_x_top + distance_after_delay
 
                 if _tracking_active and current_y_on_frame <= Y_TRIGGER and not _command_sent:
                     object_key = f"{color_name}_{shape.lower()}"
@@ -500,9 +499,6 @@ def process_frame_for_detection(input_frame, serial_manager):
 
                     # Gửi lệnh đến Arduino CHỈ KHI Ở CHẾ ĐỘ AUTO
                     if _is_auto_mode:
-                        # ===================== SỬA LỖI Ở ĐÂY =====================
-                        # 1. Sử dụng biến 'serial_manager' thay vì 'ser_instance'.
-                        # 2. Truy cập 'serial_manager.serial_port.is_open' để kiểm tra.
                         if serial_manager and serial_manager.serial_port.is_open and _object_color_detected and _predicted_time_robot_reach > -0.3:
                             # if _predicted_time_robot_reach <= 0:
                             #     print(
